@@ -5,27 +5,25 @@
  */
 package com.model;
 
+import java.io.Serializable;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 import org.hibernate.annotations.GenericGenerator;
 
 /**
  *
  * @author Dave van Rijn, Student 500714558, Klas IS202
  */
-@Entity(name = "hypotheek")
-public class Hypotheek {
+@Entity(name = "holdtransaction")
+public class HoldTransaction implements Serializable{
     
     @Id
-    @GenericGenerator(name = "hypotheek", strategy = "increment")
-    @GeneratedValue(generator = "hypotheek")
+    @GenericGenerator(name = "holdtransaction", strategy = "increment")
+    @GeneratedValue(generator = "holdtransaction")
     private int id;
-    private String kind;
-    private double redemption;
-    private double residualDebt;
-    private double interest;
-    private String description;
-    private double annuity;
     
+    @ManyToOne
+    private Transaction transaction;
 }

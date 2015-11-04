@@ -6,6 +6,7 @@
 package com.model;
 
 import java.io.Serializable;
+import java.util.Calendar;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -19,14 +20,12 @@ import org.hibernate.annotations.GenericGenerator;
 public class User implements Serializable{
     
     @Id
-    @GenericGenerator(name = "user", strategy = "increment")
-    @GeneratedValue(generator = "user")
-    private int id;
+    private long accountnumber;
     private String firstname;
     private String infix;
     private String lastname;
-    private int accountnumber;
     private double balance;
+    private int lastMonthCalculated;
     
     public User(){
         super();
@@ -39,6 +38,7 @@ public class User implements Serializable{
         this.lastname = lastname;
         this.accountnumber = accountnumber;
         this.balance = balance;
+        lastMonthCalculated = Calendar.getInstance().get(Calendar.MONTH);
     }
     
     public String getFirstname(){
@@ -65,11 +65,11 @@ public class User implements Serializable{
         this.lastname = lastname;
     }
     
-    public int getAccountnumber(){
+    public long getAccountnumber(){
         return accountnumber;
     }
     
-    public void setAccountnumber(int accountnumber){
+    public void setAccountnumber(long accountnumber){
         this.accountnumber = accountnumber;
     }
     
@@ -81,11 +81,11 @@ public class User implements Serializable{
         this.balance = balance;
     }
     
-    public int getId(){
-        return id;
+    public int getLastMonthCalculated(){
+        return lastMonthCalculated;
     }
     
-    public void setId(int id){
-        this.id = id;
+    public void setLastMonthCalculated(int lastMonthCalculated){
+        this.lastMonthCalculated = lastMonthCalculated;
     }
 }

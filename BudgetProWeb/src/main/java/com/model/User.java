@@ -6,11 +6,11 @@
 package com.model;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import javax.persistence.Entity;
 import javax.persistence.Id;
-import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
 import org.hibernate.annotations.Cascade;
@@ -44,7 +44,8 @@ public class User implements Serializable {
     @LazyCollection(LazyCollectionOption.FALSE)
     private List<HoldTransaction> holdings;
     
-    @ManyToMany(mappedBy = "users")
+    @OneToMany(mappedBy = "user")
+    @Cascade(CascadeType.ALL)
     @LazyCollection(LazyCollectionOption.FALSE)
     private List<Category> categories;
     
@@ -163,7 +164,8 @@ public class User implements Serializable {
     }
 
     public List<Category> getCategories() {
-        return categories;
+        if(categories != null) return categories;
+        return new ArrayList<>();
     }
 
     public void setCategories(List<Category> categories) {

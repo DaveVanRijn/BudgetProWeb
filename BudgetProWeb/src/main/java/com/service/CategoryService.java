@@ -6,7 +6,6 @@
 package com.service;
 
 import com.model.Category;
-import com.model.User;
 import java.util.List;
 import org.hibernate.Query;
 import org.hibernate.Session;
@@ -50,6 +49,19 @@ public class CategoryService {
         }
         return null;
     }
+    
+    public Category getCategory(String name, boolean incoming){
+        hql = "from category c where c.name = :name and c.incoming = :incoming";
+        query = getCurrentSession().createQuery(hql);
+        query.setParameter("name", name);
+        query.setParameter("incoming", incoming);
+        
+        List<Category> list = query.list();
+        if(!list.isEmpty()){
+            return list.get(0);
+        }
+        return null;
+    }
 
     public void addCategory(Category cat) {
         if (cat != null) {
@@ -69,6 +81,7 @@ public class CategoryService {
     public void deleteCategory(int id) {
         Category cat = getCategory(id);
         if (cat != null) {
+            cat.setUser(null);
             getCurrentSession().delete(cat);
         }
     }

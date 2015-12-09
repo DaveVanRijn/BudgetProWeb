@@ -66,6 +66,7 @@ public class HoldTransactionService {
     public void deleteHoldTransaction(int id){
         HoldTransaction hold = getHoldTransaction(id);
         if(hold != null){
+            hold.setUser(null);
             getCurrentSession().delete(hold);
         }
     }

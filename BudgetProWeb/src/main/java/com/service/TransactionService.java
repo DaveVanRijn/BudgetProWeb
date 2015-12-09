@@ -96,6 +96,7 @@ public class TransactionService {
     public void deleteTransaction(int id) {
         Transaction tran = getTransaction(id);
         if (tran != null) {
+            tran.setUser(null);
             getCurrentSession().delete(tran);
         }
     }

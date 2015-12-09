@@ -10,7 +10,7 @@ import java.util.List;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.LazyCollection;
@@ -30,9 +30,9 @@ public class Category implements Serializable{
     private String name;
     private boolean incoming;
     
-    @ManyToMany
+    @ManyToOne
     @LazyCollection(LazyCollectionOption.FALSE)
-    private List<User> users;
+    private User user;
     
     @OneToMany(mappedBy="category")
     @LazyCollection(LazyCollectionOption.FALSE)
@@ -40,6 +40,7 @@ public class Category implements Serializable{
 
     public Category() {
         super();
+        this.incoming = true;
     }
 
     public Category(String name, boolean income) {
@@ -71,20 +72,12 @@ public class Category implements Serializable{
         this.incoming = incoming;
     }
 
-    public List<User> getUsers() {
-        return users;
+    public User getUser() {
+        return user;
     }
 
-    public void setUsers(List<User> users) {
-        this.users = users;
-    }
-    
-    public void addUser(User user){
-        users.add(user);
-    }
-    
-    public void removeUser(User user){
-        users.remove(user);
+    public void setUser(User user) {
+        this.user = user;
     }
 
     public List<Transaction> getTransactions() {

@@ -11,6 +11,7 @@ import com.model.Category;
 import com.model.Transaction;
 import com.service.TransactionService;
 import com.service.UserService;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,9 +48,23 @@ public class TransactionController {
 
     @RequestMapping(value = "/list")
     public ModelAndView getList() {
-        ModelAndView transList = new ModelAndView("transactionList");
+        ModelAndView transList = new ModelAndView("transactions");
+
+        List<Category> cats = userService.getUser(Main.getAccountnumber()).getCategories();
+        List<Category> incoming = new ArrayList<>();
+        List<Category> outgoing = new ArrayList<>();
+
+        for (Category cat : cats) {
+            if (cat.isIncoming()) {
+                incoming.add(cat);
+                continue;
+            }
+            outgoing.add(cat);
+        }
 
         transList.addObject("user", userService.getUser(Main.getAccountnumber()));
+        transList.addObject("incomingCat", incoming);
+        transList.addObject("outgoingCat", outgoing);
         transList.addObject("formTitle", "Nieuwe transactie");
         transList.addObject("transaction", new Transaction());
         backupDate = null;
@@ -67,7 +82,6 @@ public class TransactionController {
             date += " " + time;
             transaction.setDatum(date);
             transactionService.updateTransaction(transaction);
-            Main.getCurrentUser().updateTransaction(transaction);
             backupDate = null;
         } else {
             String date = transaction.getDatum();
@@ -80,7 +94,6 @@ public class TransactionController {
 
             transaction.setDatum(date);
             transactionService.addTransaction(transaction);
-            Main.getCurrentUser().addTransaction(transaction);
         }
 
         return new ModelAndView("redirect:/transaction/list");
@@ -88,27 +101,37 @@ public class TransactionController {
 
     @RequestMapping(value = "/edit/{id}")
     public ModelAndView editTransaction(@PathVariable Integer id) {
-        ModelAndView transList = new ModelAndView("transactionList");
 
-        List<Transaction> transactions = Main.getCurrentUser().getTransactions();
-        List<Category> categories = Main.getCurrentUser().getCategories();
+        ModelAndView transList = new ModelAndView("transactions");
         Transaction transaction = transactionService.getTransaction(id);
         backupDate = transaction.getDatum();
         transaction.setDatum(backupDate.split(" ")[0]);
 
-        transList.addObject("user", Main.getCurrentUser());
-        transList.addObject("transactions", transactions);
-        transList.addObject("formTitle", "Transactie wijzigen");
-        transList.addObject("categories", categories);
+        List<Category> cats = userService.getUser(Main.getAccountnumber()).getCategories();
+        List<Category> incoming = new ArrayList<>();
+        List<Category> outgoing = new ArrayList<>();
+
+        for (Category cat : cats) {
+            if (cat.isIncoming()) {
+                incoming.add(cat);
+                continue;
+            }
+            outgoing.add(cat);
+        }
+
+        transList.addObject("user", userService.getUser(Main.getAccountnumber()));
+        transList.addObject("incomingCat", incoming);
+        transList.addObject("outgoingCat", outgoing);
+        transList.addObject("formTitle", "Transactie Details");
         transList.addObject("transaction", transaction);
 
         return transList;
     }
 
-    @RequestMapping(value = "/canceledit/{id}")
-    public ModelAndView candelEdit(@PathVariable Integer id) {
-        Transaction transaction = transactionService.getTransaction(id);
-        transaction.setDatum(backupDate);
+    @RequestMapping(value = "/delete/{id}")
+    public ModelAndView deleteTransaction(@PathVariable Integer id) {
+
+        transactionService.deleteTransaction(id);
 
         return new ModelAndView("redirect:/transaction/list");
     }

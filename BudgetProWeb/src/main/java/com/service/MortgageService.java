@@ -40,7 +40,7 @@ public class MortgageService {
     }
     
     public Mortgage getMortgage(int id){
-        hql = "from mortgage where m.id = :id";
+        hql = "from mortgage m where m.id = :id";
         query = getCurrentSession().createQuery(hql);
         query.setParameter("id", id);
         List<Mortgage> list = query.list();
@@ -48,6 +48,10 @@ public class MortgageService {
             return list.get(0);
         }
         return null;
+    }
+    
+    public void addMortgage(Mortgage mortgage){
+        getCurrentSession().save(mortgage);
     }
     
     public void updateMortgage(Mortgage mort){
@@ -59,6 +63,7 @@ public class MortgageService {
             updateMort.setKind(mort.getKind());
             updateMort.setRedemption(mort.getRedemption());
             updateMort.setResidualDebt(mort.getResidualDebt());
+            updateMort.setUser(mort.getUser());
             getCurrentSession().update(updateMort);
         }
     }
@@ -66,6 +71,7 @@ public class MortgageService {
     public void deleteMortgage(int id){
         Mortgage mort = getMortgage(id);
         if(mort != null){
+            mort.setUser(null);
             getCurrentSession().delete(mort);
         }
     }

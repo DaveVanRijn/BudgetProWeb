@@ -1,8 +1,9 @@
 <%-- 
-    Document   : actionList
-    Created on : 1-okt-2015, 12:12:01
+    Document   : mortgages
+    Created on : 9-dec-2015, 17:37:20
     Author     : Dave van Rijn, Student 500714558, Klas IS202
 --%>
+
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
@@ -33,7 +34,7 @@
                         </ul>
                     </div>
                 </div>
-                <h1>Dashboard</h1>
+                <h1>Hypotheken</h1>
             </div>
             <div class="side">
                 <div class="sidebar-wrapper">
@@ -49,7 +50,7 @@
                             </a>
                         </li>
                         <li>
-                            <a href="${pageContext.request.contextPath}" data-toggle="tooltip" data-placement="right" title="" data-original-title="Startpagina">
+                            <a href="${pageContext.request.contextPath}/category/list" data-toggle="tooltip" data-placement="right" title="Categorieën" data-original-title="Categorieën">
                                 <i class="fa fa-group"></i>
                             </a>
                         </li>
@@ -71,48 +72,38 @@
                     <div class="col-md-8">
                         <div class="widget widget-orange">
                             <div class="widget-title">
-                                <i class="fa fa-group"></i> Transacties
+                                <i class="fa fa-group"></i> Hypotheken
                             </div>
                             <div class="widget-content">
                                 <div class="table-responsive">
                                     <table class="table">
                                         <thead>
                                             <tr>
-                                                <th>Datum</th>
-                                                <th>Binnenkomend</th>
-                                                <th>Uitgaand</th>
-                                                <th>Vast/Variabel</th>
-                                                <th>Categorie</th>
+                                                <th>Naam</th>
+                                                <th>Soort</th>
+                                                <th>Restschuld</th>
+                                                <th>Rente</th>
                                                 <th></th>
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            <c:forEach  var="transaction" items="${user.transactions}">
+                                            <c:forEach  var="mortgage" items="${user.mortgages}">
                                                 <tr>
-                                                    <td>${transaction.datum}</td>
+                                                    <td>${mortgage.name}</td>
+                                                    <td>${mortgage.kind}</td>
                                                     <td>
                                                         <script>
-                                                            document.write(${transaction.incoming}.toFixed(2));
-                                                        </script>
-                                                    </td>
-                                                    <td style="color : #f00">
-                                                        <script>
-                                                            document.write(${transaction.outgoing}.toFixed(2));
+                                                            document.write(${mortgage.redemption}.toFixed(2));
                                                         </script>
                                                     </td>
                                                     <td>
                                                         <script>
-                                                            if (${transaction.repeating} > 0) {
-                                                                document.write("Herhalend");
-                                                            } else {
-                                                                document.write("Eenmalig");
-                                                            }
+                                                            document.write(${mortgage.interest}.toFixed(2));
                                                         </script>
                                                     </td>
-                                                    <td>${transaction.category.name}</td>
                                                     <td>
-                                                        <a href="${pageContext.request.contextPath}/transaction/edit/${transaction.id}" class="btn btn-iconed btn-primary btn-xs"><i class="fa fa-search"></i>Details</a>
-                                                        <a href="${pageContext.request.contextPath}/transaction/delete/${transaction.id}" class="btn btn-danger btn-xs"><i class="fa fa-times"></i>Verwijderen</a>
+                                                        <a href="${pageContext.request.contextPath}/mortgage/edit/${mortgage.id}" class="btn btn-iconed btn-primary btn-xs"><i class="fa fa-search"></i>Details</a>
+                                                        <a onclick="return confirm('Weet je zeker dat je deze hypotheek wil verwijderen?')" href="${pageContext.request.contextPath}/mortgage/delete/${mortgage.id}" class="btn btn-danger btn-xs"><i class="fa fa-times"></i>Verwijderen</a>
                                                     </td>
                                                 </tr>
                                             </c:forEach>
@@ -128,64 +119,55 @@
                                 <i class="fa fa-group"></i>${formTitle}
                             </div>
                             <div class="widget-content">
-                                <form:form method="POST" modelAttribute="transaction" action="${pageContext.request.contextPath}/transaction/add">
+                                <form:form method="POST" modelAttribute="mortgage" action="${pageContext.request.contextPath}/mortgage/add">
                                     <div class="form-group">
                                         <label control-label>ID</label>
-                                        <form:input path="id" type="text" placeholder="${transaction.id}" class="form-control" readonly="true"/>
+                                        <form:input path="id" type="text" class="form-control" readonly="true"/>
                                     </div>
                                     <div class="form-group">
-                                        <label control-label>Categorie</label>
-                                        <form:select path="category" class="form-control">
-                                            <c:forEach items="${user.categories}" var="cat">
-                                                <form:option label="${cat.name}" value="${cat.id}"/>
-                                            </c:forEach>
-                                        </form:select>
+                                        <label control-label>Naam</label>
+                                        <form:input path="name" type="text" class="form-control" />
                                     </div>
                                     <div class="form-group">
-                                        <label control-label>Inkomend</label>
-                                        <form:input path="incoming" type="text" placeholder="${transaction.incoming}" class="form-control" />
-                                    </div>
-                                    <div class="form-group">
-                                        <label control-label>Uitgaand</label>   
-                                        <form:input path="outgoing" type="text" placeholder="${transaction.outgoing}" class="form-control" style="color : #f00" />
+                                        <label control-label>Soort</label>
+                                        <div class="radio">
+                                            <form:radiobutton path="kind" name="kind" value="Aflossingsvrij" label="Aflossingsvrij"/>
+                                        </div>
+                                        <div class="radio">
+                                            <form:radiobutton path="kind" name="kind" value="Annuïteit" label="Annuïteit"/>
+                                        </div>
+                                        <div class="radio">
+                                            <form:radiobutton path="kind" name="kind" value="Lineair" label="Lineair"/>
+                                        </div>
+                                        <div class="radio">
+                                            <form:radiobutton path="kind" name="kind" value="Spaar" label="Spaar"/>
+                                        </div>
                                     </div>
                                     <div class="form-group">
                                         <label control-label>Omschrijving</label>
-                                        <form:textarea path="description" class="form-control" placeholder="${transaction.description}"/>
+                                        <form:textarea path="description" class="form-control"/>
                                     </div>
                                     <div class="form-group">
-                                        <label control-label>Herhaling</label>
-                                        <div class="radio">
-                                            <form:radiobutton path="repeating" name="herhaling" value="0" label=" Nooit" />
-                                        </div>
-                                        <div class="radio">
-                                            <form:radiobutton path="repeating" name="herhaling" value="12" label=" Elke maand" />
-                                        </div>
-                                        <div class="radio">
-                                            <form:radiobutton path="repeating" name="herhaling" value="4" label=" Elk kwartaal" />
-                                        </div>
-                                        <div class="radio">
-                                            <form:radiobutton path="repeating" name="herhaling" value="2" label=" Elk half jaar" />
-                                        </div>
-                                        <div class="radio">
-                                            <form:radiobutton path="repeating" name="herhaling" value="1" label=" Elk jaar" />
-                                        </div>
+                                        <label control-label>Aflossing</label>
+                                        <form:input path="redemption" type="number" step="any" min="0" class="form-control"/>
                                     </div>
                                     <div class="form-group">
-                                        <label control-label>Datum</label>
-                                        <form:input path="datum" type="date" value="${transaction.datum}" class="form-control"/>
+                                        <label control-label>Restschuld</label>
+                                        <form:input path="residualDebt" type="number" step="any" min="0" class="form-control"/>
                                     </div>
-                                    <div class="row">
-                                        <div class="col-md-4">
-                                            <div class="form-group">
-                                                <form:button type="submit" class="btn btn-primary">Opslaan</form:button>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-4">
-                                                <div class="form-group">
-                                                    <a href="${pageContext.request.contextPath}/transaction/canceledit/${transaction.id}" class="btn  btn-warning">Annuleren</a>
-                                            </div>
+                                    <div class="form-group">
+                                        <label control-label>Rente</label>
+                                        <form:input path="interest" type="number" step="any" min="0" class="form-control"/>
+                                    </div>
+                                    <div class="form-group">
+                                        <label control-label>Annuïteit</label>
+                                        <form:input path="annuity" type="number" step="any" min="0" class="form-control"/>
+                                    </div>
+                                    <div class="form-group">
+                                        <form:button type="submit" class="btn btn-primary">Opslaan</form:button>
                                         </div>
+                                        <div class="form-group">
+                                            <a href="${pageContext.request.contextPath}/mortgage/list" class="btn  btn-warning">Annuleren</a>
                                     </div>
                                 </form:form>
                             </div>

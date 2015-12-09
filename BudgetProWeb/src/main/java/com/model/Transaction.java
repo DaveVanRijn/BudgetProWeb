@@ -6,6 +6,8 @@
 package com.model;
 
 import java.io.Serializable;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -42,6 +44,9 @@ public class Transaction implements Serializable{
 
     public Transaction() {
         super();
+        DateFormat dateForm = new SimpleDateFormat("yyyy-MM-dd");
+        Date date = new Date();
+        this.datum = dateForm.format(date);
     }
 
     public Transaction(double incoming, double outgoing, String description, String datum, int repeating, Category category) {

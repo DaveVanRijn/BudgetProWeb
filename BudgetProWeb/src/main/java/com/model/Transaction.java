@@ -7,13 +7,13 @@ package com.model;
 
 import java.io.Serializable;
 import java.util.Date;
-import java.util.List;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.LazyCollection;
+import org.hibernate.annotations.LazyCollectionOption;
 
 /**
  *
@@ -26,30 +26,31 @@ public class Transaction implements Serializable{
     @GenericGenerator(name = "transaction", strategy = "increment")
     @GeneratedValue(generator = "transaction")
     private int id;
-    private String kind; //vast/variabel
     private double incoming;
     private double outgoing;
     private String description;
-    private Date datum;
+    private String datum;
     private int repeating;
     
-    @OneToMany(mappedBy = "transaction")
-    private List<HoldTransaction> holding;
+    @ManyToOne
+    @LazyCollection(LazyCollectionOption.FALSE)
+    private User user;
     
     @ManyToOne
-    private User user;
+    @LazyCollection(LazyCollectionOption.FALSE)
+    private Category category;
 
     public Transaction() {
         super();
     }
 
-    public Transaction(String kind, double incoming, double outgoing, String description, Date datum, int repeating) {
-        this.kind = kind;
+    public Transaction(double incoming, double outgoing, String description, String datum, int repeating, Category category) {
         this.incoming = incoming;
         this.outgoing = outgoing;
         this.description = description;
         this.datum = datum;
         this.repeating = repeating;
+        this.category = category;
     }
 
     public int getId() {
@@ -58,14 +59,6 @@ public class Transaction implements Serializable{
 
     public void setId(int id) {
         this.id = id;
-    }
-
-    public String getKind() {
-        return kind;
-    }
-
-    public void setKind(String kind) {
-        this.kind = kind;
     }
 
     public double getIncoming() {
@@ -92,11 +85,11 @@ public class Transaction implements Serializable{
         this.description = description;
     }
 
-    public Date getDatum() {
+    public String getDatum() {
         return datum;
     }
 
-    public void setDatum(Date datum) {
+    public void setDatum(String datum) {
         this.datum = datum;
     }
 
@@ -108,20 +101,20 @@ public class Transaction implements Serializable{
         this.repeating = repeating;
     }
 
-    public List<HoldTransaction> getHolding() {
-        return holding;
-    }
-
-    public void setHolding(List<HoldTransaction> holding) {
-        this.holding = holding;
-    }
-
     public User getUser() {
         return user;
     }
 
     public void setUser(User user) {
         this.user = user;
+    }
+
+    public Category getCategory() {
+        return category;
+    }
+
+    public void setCategory(Category category) {
+        this.category = category;
     }
     
     

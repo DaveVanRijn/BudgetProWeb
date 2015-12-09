@@ -37,31 +37,31 @@
                                 <div class="form-group">
                                     <label class="col-md-4 control-label">Rekeningnummer</label>
                                     <div class="col-md-8">
-                                        <form:input path="accountnumber" type="text" placeholder="Rekeningnummer" class="form-control" required="true"/>
+                                        <form:input path="accountnumber" type="text" placeholder="Rekeningnummer" class="form-control" required="true" pattern="[0-9]*"/>
                                     </div>
                                 </div>
                                 <div class="form-group">
                                     <label class="col-md-4 control-label">Voornaam</label>
                                     <div class="col-md-8">
-                                        <form:input path="firstname" type="text" placeholder="Voornaam" class="form-control" required="true"/>
+                                        <form:input path="firstname" type="text" placeholder="Voornaam" class="form-control" required="true" pattern="[a-zA-Z]*"/>
                                     </div>
                                 </div>
                                 <div class="form-group">
                                     <label class="col-md-4 control-label">Tussenvoegsel</label>
                                     <div class="col-md-8">
-                                        <form:input path="infix" type="text" placeholder="Tussenvoegsel" class="form-control" required="true"/>
+                                        <form:input path="infix" type="text" placeholder="Tussenvoegsel" class="form-control" pattern="[a-z]*"/>
                                     </div>
                                 </div>
                                 <div class="form-group">
                                     <label class="col-md-4 control-label">Achternaam</label>
                                     <div class="col-md-8">
-                                        <form:input path="lastname" type="text" placeholder="Achternaam" class="form-control" required="true"/>
+                                        <form:input path="lastname" type="text" placeholder="Achternaam" class="form-control" required="true" pattern="[a-zA-Z]*"/>
                                     </div>
                                 </div>
                                 <div class="form-group">
                                     <label class="col-md-4 control-label">Huidig budget</label>
                                     <div class="col-md-8">
-                                        <form:input path="balance" type="text" placeholder="Huidig budget" class="form-control" required="true"/>
+                                        <form:input path="balance" type="text" placeholder="Huidig budget" class="form-control" required="true" pattern="\d+(\.\d{2})?"/>
                                     </div>
                                 </div>
                                 <div class="form-group">

@@ -7,18 +7,24 @@ package com.model;
 
 import java.io.Serializable;
 import java.util.Calendar;
+import java.util.List;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import org.hibernate.annotations.GenericGenerator;
+import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
+import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.CascadeType;
+import org.hibernate.annotations.LazyCollection;
+import org.hibernate.annotations.LazyCollectionOption;
 
 /**
  *
  * @author Dave van Rijn, Student 500714558, Klas IS202
  */
 @Entity(name = "user")
-public class User implements Serializable{
-    
+public class User implements Serializable {
+
     @Id
     private long accountnumber;
     private String firstname;
@@ -26,13 +32,34 @@ public class User implements Serializable{
     private String lastname;
     private double balance;
     private int lastMonthCalculated;
+
+    @OneToMany(mappedBy = "user")
+    @Cascade(CascadeType.ALL)
+    @LazyCollection(LazyCollectionOption.FALSE)
+    @OrderBy("datum DESC")
+    private List<Transaction> transactions;
     
-    public User(){
+    @OneToMany(mappedBy = "user")
+    @Cascade(CascadeType.ALL)
+    @LazyCollection(LazyCollectionOption.FALSE)
+    private List<HoldTransaction> holdings;
+    
+    @ManyToMany(mappedBy = "users")
+    @LazyCollection(LazyCollectionOption.FALSE)
+    private List<Category> categories;
+    
+    @OneToMany(mappedBy = "user")
+    @Cascade(CascadeType.ALL)
+    @LazyCollection(LazyCollectionOption.FALSE)
+    private List<Mortgage> mortgages;
+    
+    
+    public User() {
         super();
     }
-    
-    public User(String firstname, String infix, String lastname, 
-            int accountnumber, double balance){
+
+    public User(String firstname, String infix, String lastname,
+            int accountnumber, double balance) {
         this.firstname = firstname;
         this.infix = infix;
         this.lastname = lastname;
@@ -40,52 +67,130 @@ public class User implements Serializable{
         this.balance = balance;
         lastMonthCalculated = Calendar.getInstance().get(Calendar.MONTH);
     }
-    
-    public String getFirstname(){
+
+    public String getFirstname() {
         return firstname;
     }
-    
-    public void setFirstname(String firstname){
+
+    public void setFirstname(String firstname) {
         this.firstname = firstname;
     }
-    
-    public String getInfix(){
+
+    public String getInfix() {
         return infix;
     }
-    
-    public void setInfix(String infix){
+
+    public void setInfix(String infix) {
         this.infix = infix;
     }
-    
-    public String getLastname(){
+
+    public String getLastname() {
         return lastname;
     }
-    
-    public void setLastname(String lastname){
+
+    public void setLastname(String lastname) {
         this.lastname = lastname;
     }
-    
-    public long getAccountnumber(){
+
+    public long getAccountnumber() {
         return accountnumber;
     }
-    
-    public void setAccountnumber(long accountnumber){
+
+    public void setAccountnumber(long accountnumber) {
         this.accountnumber = accountnumber;
     }
-    
-    public double getBalance(){
+
+    public double getBalance() {
         return balance;
     }
-    
-    public void setBalance(double balance){
+
+    public void setBalance(double balance) {
         this.balance = balance;
     }
-    
-    public int getLastMonthCalculated(){
+
+    public int getLastMonthCalculated() {
         return lastMonthCalculated;
     }
-    
-    public void setLastMonthCalculated(int lastMonthCalculated){
+
+    public void setLastMonthCalculated(int lastMonthCalculated) {
         this.lastMonthCalculated = lastMonthCalculated;
+    }
+
+    public List<Transaction> getTransactions() {
+        return transactions;
+    }
+
+    public void setTransactions(List<Transaction> transactions) {
+        this.transactions = transactions;
+    }
+    
+    public void addTransaction(Transaction tran){
+        this.transactions.add(tran);
+    }
+    
+    public void removeTransaction(Transaction tran){
+        this.transactions.remove(tran);
+    }
+    
+    public void updateTransaction(Transaction trans){
+        for(Transaction s : getTransactions()){
+            if(s.getId() == trans.getId()){
+                s.setCategory(trans.getCategory());
+                s.setDatum(trans.getDatum());
+                s.setDescription(trans.getDescription());
+                s.setIncoming(trans.getIncoming());
+                s.setOutgoing(trans.getOutgoing());
+                s.setRepeating(trans.getRepeating());
+                break;
+            }
+        }
+    }
+
+    public List<HoldTransaction> getHoldings() {
+        return holdings;
+    }
+
+    public void setHoldings(List<HoldTransaction> holdings) {
+        this.holdings = holdings;
+    }
+    
+    public void addHolding(HoldTransaction hold){
+        holdings.add(hold);
+    }
+    
+    public void removeHolding(HoldTransaction hold){
+        holdings.remove(hold);
+    }
+
+    public List<Category> getCategories() {
+        return categories;
+    }
+
+    public void setCategories(List<Category> categories) {
+        this.categories = categories;
+    }
+    
+    public void addCategory(Category cat){
+        categories.add(cat);
+    }
+    
+    public void removeCategory(Category cat){
+        categories.remove(cat);
+    }
+
+    public List<Mortgage> getMortgages() {
+        return mortgages;
+    }
+
+    public void setMortgages(List<Mortgage> mortgages) {
+        this.mortgages = mortgages;
+    }
+    
+    public void addMortgage(Mortgage mort){
+        mortgages.add(mort);
+    }
+    
+    public void removeMortgage(Mortgage mort){
+        mortgages.remove(mort);
     }
 }

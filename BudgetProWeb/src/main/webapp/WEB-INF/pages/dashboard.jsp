@@ -35,16 +35,10 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <link rel='stylesheet' href='${pageContext.request.contextPath}/static/css/style.css'>
-        <link href='http://fonts.googleapis.com/css?family=Roboto:100,300,400,700%7CRoboto+Condensed:300,400,700' rel='stylesheet' type='text/css'>
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
         <link href="${pageContext.request.contextPath}/static/assets/favicon.ico" rel="shortcut icon">
         <link href="${pageContext.request.contextPath}/static/assets/apple-touch-icon.png" rel="apple-touch-icon">
-        <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
-        <!--[if lt IE 9]>
-        @javascript html5shiv respond.min
-        <![endif]-->
         <title>BudgetPro</title>
-
     </head>
     <body class="glossed">
         <div class="all-wrapper fixed-header left-menu hide-sub-menu">
@@ -68,12 +62,12 @@
                 <div class="sidebar-wrapper">
                     <ul>
                         <li>
-                            <a href="${pageContext.request.contextPath}" data-toggle="tooltip" data-placement="right" title="" data-original-title="Startpagina">
+                            <a href="${pageContext.request.contextPath}/dashboard" data-toggle="tooltip" data-placement="right" title="" data-original-title="Startpagina">
                                 <i class="fa fa-home"></i>
                             </a>
                         </li>
                         <li>
-                            <a href="${pageContext.request.contextPath}" data-toggle="tooltip" data-placement="right" title="" data-original-title="Startpagina">
+                            <a href="${pageContext.request.contextPath}/transaction/list" data-toggle="tooltip" data-placement="right" title="Transacties" data-original-title="Transacties">
                                 <i class="fa fa-map-marker"></i>
                             </a>
                         </li>
@@ -118,9 +112,25 @@
                                                 <c:forEach  var="transaction" items="${transactionList}">
                                                     <tr>
                                                         <td>${transaction.datum}</td>
-                                                        <td>${transaction.incoming}</td>
-                                                        <td>${transaction.outgoing}</td>
-                                                        <td>${transaction.kind}</td>
+                                                        <td>
+                                                            <script>
+                                                                document.write(${transaction.incoming}.toFixed(2));
+                                                            </script>
+                                                        </td>
+                                                        <td>
+                                                            <script>
+                                                                document.write(${transaction.outgoing}.toFixed(2));
+                                                            </script>
+                                                        </td>
+                                                        <td>
+                                                            <script>
+                                                                if(${transaction.repeating} > 0){
+                                                                    document.write("Herhalend");
+                                                                } else {
+                                                                    document.write("Eenmalig");
+                                                                }
+                                                            </script>
+                                                        </td>
                                                     </tr>
                                                 </c:forEach>
                                             </tbody>
@@ -135,15 +145,13 @@
                                     <i class="fa fa-group"></i>Statistieken
                                 </div>
                                 <div class="widget-content">
-                                    <div id="piechart_3d" style="height: 300px;"</div>
+                                    <div id="piechart_3d" style="height: 225px;"</div>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-            <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
-            <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js"></script>
             <script src='${pageContext.request.contextPath}/static/js/ad67372f4b8b70896e8a596720082ac6.js'></script>
             <script src='${pageContext.request.contextPath}/static/js/d7dfc13379a397356e42ab8bd98901a0.js'></script>
     </body>

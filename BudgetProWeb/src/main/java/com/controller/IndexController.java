@@ -38,24 +38,31 @@ public class IndexController {
         return login;
     }
 
+    @RequestMapping(value = "/dashboard")
+    public ModelAndView homescreen() {
+        
+        double[] stats = transactionService.getTotalOutAndIn(Main.getCurrentUser());
+        double outgoing = stats[0];
+        double incoming = stats[1];
+        
+        ModelAndView dashboardView = new ModelAndView("dashboard");
+        dashboardView.addObject("outgoing", outgoing);
+        dashboardView.addObject("incoming", incoming);
+        dashboardView.addObject("transactionList", transactionService.getRecentTransactions(Main.getCurrentUser()));
+        dashboardView.addObject("user", Main.getCurrentUser());
+
+        return dashboardView;
+    }
+
     @RequestMapping(value = "/login", method = RequestMethod.POST)
     public ModelAndView login(@ModelAttribute("user") User user) throws IOException {
         User loginUser = userService.getUser(user.getAccountnumber());
 
         if (loginUser != null) {
             Main.setCurrentUser(loginUser);
-            double[] stats = transactionService.getTotalOutAndIn();
+            ModelAndView view = new ModelAndView("redirect:/dashboard");
 
-            double outgoing = stats[0];
-            double incoming = stats[1];
-            
-            ModelAndView dashboardView = new ModelAndView("dashboard");
-            dashboardView.addObject("outgoing", outgoing);
-            dashboardView.addObject("incoming", incoming);
-            dashboardView.addObject("transactionList", transactionService.getRecentTransactions());
-            dashboardView.addObject("user", Main.getCurrentUser());
-
-            return dashboardView;
+            return view;
         }
 
         ModelAndView login = new ModelAndView("login");

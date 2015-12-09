@@ -5,9 +5,9 @@
  */
 package com.service;
 
-import System.Main;
 import com.model.Transaction;
 import com.model.User;
+import java.util.ArrayList;
 import java.util.List;
 import org.hibernate.Query;
 import org.hibernate.Session;
@@ -25,72 +25,112 @@ import org.springframework.transaction.annotation.Transactional;
 @Repository
 @Transactional
 public class TransactionService {
-    
+
     @Autowired
     private SessionFactory sessionFactory;
     private String hql;
     private Query query;
-    
-    private Session getCurrentSession(){
+
+    private Session getCurrentSession() {
         return sessionFactory.getCurrentSession();
     }
     
-    public List<Transaction> getTransactions(){
+    /**
+     * Add a new transaction to the database
+     * @param trans the transaction
+     */
+    public void addTransaction(Transaction trans){
+        getCurrentSession().save(trans);
+    }
+
+    /**
+     * Get all transactions from the database
+     *
+     * @return List of transactions
+     */
+    public List<Transaction> getTransactions() {
         hql = "from transaction";
-        query = getCurrentSession().createQuery(hql);
+        query = getCurrentSession().createQuery(hql);   
         return query.list();
     }
-    
-    public Transaction getTransaction(int id){
+
+    /**
+     * Get a transaction with specified id
+     *
+     * @param id
+     * @return Transaction
+     */
+    public Transaction getTransaction(int id) {
         hql = "from transaction t where t.id = :id";
         query = getCurrentSession().createQuery(hql);
         query.setParameter("id", id);
         List<Transaction> list = query.list();
-        if(list.isEmpty()) return null;
+        if (list.isEmpty()) {
+            return null;
+        }
         return list.get(0);
     }
-    
-    public void updateTransaction(Transaction transaction){
+
+    /**
+     * Update an excisting transaction
+     *
+     * @param transaction The transaction to be deleted
+     */
+    public void updateTransaction(Transaction transaction) {
         Transaction updateTransaction = getTransaction(transaction.getId());
-        
-        updateTransaction.setDatum(transaction.getDatum());
-        updateTransaction.setDescription(transaction.getDescription());
-        updateTransaction.setIncoming(transaction.getIncoming());
-        updateTransaction.setKind(transaction.getKind());
-        updateTransaction.setOutgoing(transaction.getOutgoing());
-        updateTransaction.setRepeating(transaction.getRepeating());
-        
-        getCurrentSession().update(updateTransaction);
+        if (updateTransaction != null) {
+            updateTransaction.setDatum(transaction.getDatum());
+            updateTransaction.setDescription(transaction.getDescription());
+            updateTransaction.setIncoming(transaction.getIncoming());
+            updateTransaction.setOutgoing(transaction.getOutgoing());
+            updateTransaction.setRepeating(transaction.getRepeating());
+            getCurrentSession().update(updateTransaction);
+        }
     }
-    
-    public void deleteTransaction(Transaction transaction){
-        getCurrentSession().delete(transaction);
+
+    /**
+     * Delete the transacion with specified id
+     *
+     * @param id
+     */
+    public void deleteTransaction(int id) {
+        Transaction tran = getTransaction(id);
+        if (tran != null) {
+            getCurrentSession().delete(tran);
+        }
     }
-    
-    public double[] getTotalOutAndIn(){
-        User user = Main.getCurrentUser();
-        hql = "from transaction t where t.user = :user";
-        query = getCurrentSession().createQuery(hql);
-        query.setParameter("user", user);
-        List<Transaction> list = query.list();
-        
+
+    /**
+     * Get total incoming and outgoing of current user
+     *
+     * @param user
+     * @return Array containing total income and total outgoing
+     */
+    public double[] getTotalOutAndIn(User user) {
+        List<Transaction> list = user.getTransactions();
+
         double outgoing = 0;
         double incoming = 0;
-        for(Transaction t : list){
+        for (Transaction t : list) {
             outgoing += t.getOutgoing();
             incoming += t.getIncoming();
         }
-        
         return new double[]{outgoing, incoming};
     }
-    
-    public List<Transaction> getRecentTransactions(){
-        User user = Main.getCurrentUser();
-        hql = "from transaction t where t.user = :user order by t.datum";
-        query = getCurrentSession().createQuery(hql);
-        query.setParameter("user", user);
-        query.setMaxResults(5);
-        
-        return query.list();
+
+    /**
+     * Get the 5 most recent transactions of the specified user
+     *
+     * @param user
+     * @return List of 5 recent transactions
+     */
+    public List<Transaction> getRecentTransactions(User user) {
+        List<Transaction> transactions = user.getTransactions();
+        List<Transaction> temp = new ArrayList<>();
+        temp.addAll(transactions);
+        while (temp.size() > 5) {
+            temp.remove(0);
+        }
+        return temp;
     }
 }

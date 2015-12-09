@@ -5,7 +5,6 @@
  */
 package com.service;
 
-
 import com.model.User;
 import java.util.List;
 import org.hibernate.Query;
@@ -24,55 +23,81 @@ import org.springframework.transaction.annotation.Transactional;
 @Repository
 @Transactional
 public class UserService {
-    
+
     @Autowired
-    SessionFactory sessionFactory;
+    private SessionFactory sessionFactory;
     private String hql;
     private Query query;
-    
-    private Session getCurrentSession(){
+
+    private Session getCurrentSession() {
         return sessionFactory.getCurrentSession();
     }
-    
-    public List<User> getAllUsers(){
+
+    /**
+     * Get all users from the database
+     *
+     * @return List of users
+     */
+    public List<User> getAllUsers() {
         hql = "from user";
         query = getCurrentSession().createQuery(hql);
         return (List<User>) query.list();
     }
-    
-    public User getUser(long accountnumber){
+
+    /**
+     * Get the user with specified accountnumber
+     *
+     * @param accountnumber
+     * @return User
+     */
+    public User getUser(long accountnumber) {
         hql = "from user u where u.accountnumber = :accountnumber";
         query = getCurrentSession().createQuery(hql);
         query.setParameter("accountnumber", accountnumber);
         List<User> list = query.list();
-        if(list.isEmpty()){
+        if (list.isEmpty()) {
             return null;
         }
-        return list.get(0); 
+        return list.get(0);
     }
-    
-    public void addUser(User user){
-        if(user != null){
+
+    /**
+     * Add a new user to the database
+     *
+     * @param user
+     */
+    public void addUser(User user) {
+        if (user != null) {
             getCurrentSession().save(user);
         }
     }
-    
-    public void updateUser(User user){
+
+    /**
+     * Update an excisting user
+     * @param user
+     */
+    public void updateUser(User user) {
         User updateUser = getUser(user.getAccountnumber());
-        
-        updateUser.setBalance(user.getBalance());
-        updateUser.setFirstname(user.getFirstname());
-        updateUser.setInfix(user.getInfix());
-        updateUser.setLastname(user.getLastname());
-        
-        getCurrentSession().update(updateUser);
+
+        if (updateUser != null) {
+            updateUser.setBalance(user.getBalance());
+            updateUser.setFirstname(user.getFirstname());
+            updateUser.setInfix(user.getInfix());
+            updateUser.setLastname(user.getLastname());
+
+            getCurrentSession().update(updateUser);
+        }
     }
-    
-    public void deleteUser(long accountnumber){
+
+    /**
+     * Delete the user with specified accountnumber
+     * @param accountnumber 
+     */
+    public void deleteUser(long accountnumber) {
         User user = getUser(accountnumber);
-        if(user != null){
+        if (user != null) {
             getCurrentSession().delete(user);
         }
     }
-    
+
 }

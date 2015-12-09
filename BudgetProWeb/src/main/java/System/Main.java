@@ -14,6 +14,7 @@ import com.model.User;
 public class Main {
     
     private static User currentUser;
+    private static long currentAccountnumber;
     
     public static User getCurrentUser(){
         return currentUser;
@@ -25,6 +26,10 @@ public class Main {
     
     public static void resetCurrentUser(){
         currentUser = null;
+    }
+    
+    public static long getAccountnumber(){
+        return currentAccountnumber;
     }
 }
 

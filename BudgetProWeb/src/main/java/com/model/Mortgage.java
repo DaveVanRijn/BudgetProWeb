@@ -9,7 +9,10 @@ import java.io.Serializable;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.LazyCollection;
+import org.hibernate.annotations.LazyCollectionOption;
 
 /**
  *
@@ -28,6 +31,10 @@ public class Mortgage implements Serializable{
     private double interest;
     private String description;
     private double annuity;
+    
+    @ManyToOne
+    @LazyCollection(LazyCollectionOption.FALSE)
+    private User user;
 
     public Mortgage() {
         super();
@@ -96,6 +103,14 @@ public class Mortgage implements Serializable{
 
     public void setAnnuity(double annuity) {
         this.annuity = annuity;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
     
     

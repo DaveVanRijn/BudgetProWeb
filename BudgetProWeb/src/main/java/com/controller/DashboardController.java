@@ -5,6 +5,7 @@
  */
 package com.controller;
 
+import System.Main;
 import com.service.TransactionService;
 import com.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,24 +20,24 @@ import org.springframework.web.servlet.ModelAndView;
 @Controller
 @RequestMapping(value = "/dashboard")
 public class DashboardController {
-    
-    @Autowired
-    private UserService userService;
+
     @Autowired
     private TransactionService transactionService;
-    
+
     @RequestMapping(value = "/start")
-    public ModelAndView dashboard(){
-        double[] stats = transactionService.getTotalOutAndIn();
-        
+    public ModelAndView dashboard() {
+        double[] stats = transactionService.getTotalOutAndIn(Main.getCurrentUser());
+
         double outgoing = stats[0];
         double incoming = stats[1];
-        
-        ModelAndView dashboardView = new ModelAndView();
+
+        ModelAndView dashboardView = new ModelAndView("dashboard");
         dashboardView.addObject("outgoing", outgoing);
         dashboardView.addObject("incoming", incoming);
-        
+        dashboardView.addObject("transactionList", transactionService.getRecentTransactions(Main.getCurrentUser()));
+        dashboardView.addObject("user", Main.getCurrentUser());
+
         return dashboardView;
-        
+
     }
 }

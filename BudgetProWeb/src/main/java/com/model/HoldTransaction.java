@@ -6,7 +6,6 @@
 package com.model;
 
 import java.io.Serializable;
-import java.util.Date;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -29,8 +28,7 @@ public class HoldTransaction implements Serializable {
     private double incoming;
     private double outgoing;
     private String description;
-    private Date date;
-    private int repeating;
+    private String datum;
     private String category;
     
     @ManyToOne
@@ -42,12 +40,11 @@ public class HoldTransaction implements Serializable {
     }
 
     public HoldTransaction(double incoming, double outgoing, String description, 
-            Date date, int repeating, String category, User user) {
+            String datum, String category, User user) {
         this.incoming = incoming;
         this.outgoing = outgoing;
         this.description = description;
-        this.date = date;
-        this.repeating = repeating;
+        this.datum = datum;
         this.category = category;
         this.user = user;
     }
@@ -84,20 +81,12 @@ public class HoldTransaction implements Serializable {
         this.description = description;
     }
 
-    public Date getDate() {
-        return date;
+    public String getDatum() {
+        return datum;
     }
 
-    public void setDate(Date date) {
-        this.date = date;
-    }
-
-    public int getRepeating() {
-        return repeating;
-    }
-
-    public void setRepeating(int repeating) {
-        this.repeating = repeating;
+    public void setDatum(String datum) {
+        this.datum = datum;
     }
 
     public String getCategory() {

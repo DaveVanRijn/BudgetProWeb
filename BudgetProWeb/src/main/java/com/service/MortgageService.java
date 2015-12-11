@@ -75,7 +75,7 @@ public class MortgageService {
     public void deleteMortgage(int id){
         Mortgage mort = getMortgage(id);
         if(mort != null){
-            userService.getUser(Main.getAccountnumber()).removeMortgage(mort);
+            Main.getCurrentUser().removeMortgage(mort);
         }
     }
 }

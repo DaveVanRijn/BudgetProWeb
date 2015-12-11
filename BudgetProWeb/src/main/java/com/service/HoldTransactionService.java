@@ -58,11 +58,10 @@ public class HoldTransactionService {
         HoldTransaction updateHold = getHoldTransaction(hold.getId());
         if(updateHold != null){
             updateHold.setCategory(hold.getCategory());
-            updateHold.setDate(hold.getDate());
+            updateHold.setDatum(hold.getDatum());
             updateHold.setDescription(hold.getDescription());
             updateHold.setIncoming(hold.getIncoming());
             updateHold.setOutgoing(hold.getOutgoing());
-            updateHold.setRepeating(hold.getRepeating());
             updateHold.setUser(hold.getUser());
             getCurrentSession().update(updateHold);
         }
@@ -71,7 +70,7 @@ public class HoldTransactionService {
     public void deleteHoldTransaction(int id){
         HoldTransaction hold = getHoldTransaction(id);
         if(hold != null){
-            userService.getUser(Main.getAccountnumber()).removeHolding(hold);
+            Main.getCurrentUser().removeHolding(hold);
         }
     }
 }

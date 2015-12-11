@@ -9,6 +9,7 @@ import System.Main;
 import com.model.Transaction;
 import com.model.User;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 import org.hibernate.Query;
 import org.hibernate.Session;
@@ -102,7 +103,7 @@ public class TransactionService {
     public void deleteTransaction(int id) {
         Transaction tran = getTransaction(id);
         if (tran != null) {
-            userService.getUser(Main.getAccountnumber()).removeTransaction(tran);
+            Main.getCurrentUser().removeTransaction(tran);
         }
     }
 

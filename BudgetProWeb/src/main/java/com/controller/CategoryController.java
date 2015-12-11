@@ -37,7 +37,7 @@ public class CategoryController {
     public ModelAndView categoryList() {
         ModelAndView view = new ModelAndView("categories");
 
-        view.addObject("user", userService.getUser(Main.getAccountnumber()));
+        view.addObject("user", Main.getCurrentUser());
         view.addObject("formTitle", newCategory);
         view.addObject("category", new Category());
 
@@ -53,7 +53,7 @@ public class CategoryController {
                 categoryService.addCategory(category);
             } else {
                 ModelAndView view = new ModelAndView("categories");
-                view.addObject("user", userService.getUser(Main.getAccountnumber()));
+                view.addObject("user", Main.getCurrentUser());
                 view.addObject("formTitle", newCategory);
                 view.addObject("category", category);
                 view.addObject("message", "Er bestaat al een categorie met deze naam!");
@@ -64,7 +64,7 @@ public class CategoryController {
                 categoryService.updateCategory(category);
             } else {
                 ModelAndView view = new ModelAndView("categories");
-                view.addObject("user", userService.getUser(Main.getAccountnumber()));
+                view.addObject("user", Main.getCurrentUser());
                 view.addObject("formTitle", editCategory);
                 view.addObject("category", category);
                 view.addObject("message", "Er bestaat al een categorie met deze naam!");
@@ -81,7 +81,7 @@ public class CategoryController {
         ModelAndView view = new ModelAndView("categories");
         
         Category category = categoryService.getCategory(id);
-        view.addObject("user", userService.getUser(Main.getAccountnumber()));
+        view.addObject("user", Main.getCurrentUser());
         view.addObject("formTitle", editCategory);
         view.addObject("category", category);
 
@@ -91,7 +91,6 @@ public class CategoryController {
     @RequestMapping(value = "delete/{id}")
     public ModelAndView deleteCategory(@PathVariable Integer id) {
 
-        userService.getUser(Main.getAccountnumber()).removeCategory(categoryService.getCategory(id));
         categoryService.deleteCategory(id);
 
         return new ModelAndView("redirect:/category/list");

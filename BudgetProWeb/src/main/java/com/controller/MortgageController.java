@@ -36,7 +36,7 @@ public class MortgageController {
     public ModelAndView listMortgages(){
         ModelAndView view = new ModelAndView("mortgages");
         
-        view.addObject("user", userService.getUser(Main.getAccountnumber()));
+        view.addObject("user", Main.getCurrentUser());
         view.addObject("formTitle", newMortgage);
         view.addObject("mortgage", new Mortgage());
         
@@ -60,7 +60,7 @@ public class MortgageController {
     public ModelAndView editMortgage(@PathVariable Integer id){
         
         ModelAndView view = new ModelAndView("mortgages");
-        view.addObject("user", userService.getUser(Main.getAccountnumber()));
+        view.addObject("user", Main.getCurrentUser());
         view.addObject("formTitle", editMortgage);
         view.addObject("mortgage", mortgageService.getMortgage(id));
         
@@ -70,10 +70,7 @@ public class MortgageController {
     @RequestMapping(value = "/delete/{id}")
     public ModelAndView deleteMortgage(@PathVariable Integer id){
         
-        Mortgage mort = mortgageService.getMortgage(id);
-        mort.setUser(null);
-        mortgageService.updateMortgage(mort);
-        mortgageService.deleteMortgage(mort.getId());
+        mortgageService.deleteMortgage(id);
         
         return new ModelAndView("redirect:/mortgage/list");
     }

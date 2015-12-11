@@ -28,7 +28,7 @@ public class Main {
     }
     
     public static long getAccountnumber(){
-        return currentUser.getAccountnumber();
+        return getCurrentUser().getAccountnumber();
     }
 }
 

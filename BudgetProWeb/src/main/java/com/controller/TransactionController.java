@@ -50,7 +50,7 @@ public class TransactionController {
     public ModelAndView getList() {
         ModelAndView transList = new ModelAndView("transactions");
 
-        List<Category> cats = userService.getUser(Main.getAccountnumber()).getCategories();
+        List<Category> cats = Main.getCurrentUser().getCategories();
         List<Category> incoming = new ArrayList<>();
         List<Category> outgoing = new ArrayList<>();
 
@@ -62,7 +62,7 @@ public class TransactionController {
             outgoing.add(cat);
         }
 
-        transList.addObject("user", userService.getUser(Main.getAccountnumber()));
+        transList.addObject("user", Main.getCurrentUser());
         transList.addObject("incomingCat", incoming);
         transList.addObject("outgoingCat", outgoing);
         transList.addObject("formTitle", "Nieuwe transactie");
@@ -107,7 +107,7 @@ public class TransactionController {
         backupDate = transaction.getDatum();
         transaction.setDatum(backupDate.split(" ")[0]);
 
-        List<Category> cats = userService.getUser(Main.getAccountnumber()).getCategories();
+        List<Category> cats = Main.getCurrentUser().getCategories();
         List<Category> incoming = new ArrayList<>();
         List<Category> outgoing = new ArrayList<>();
 
@@ -119,7 +119,7 @@ public class TransactionController {
             outgoing.add(cat);
         }
 
-        transList.addObject("user", userService.getUser(Main.getAccountnumber()));
+        transList.addObject("user", Main.getCurrentUser());
         transList.addObject("incomingCat", incoming);
         transList.addObject("outgoingCat", outgoing);
         transList.addObject("formTitle", "Transactie Details");

@@ -6,10 +6,15 @@
 package com.controller;
 
 import System.Main;
+import com.model.HoldTransaction;
+import com.model.Transaction;
 import com.model.User;
 import com.service.TransactionService;
 import com.service.UserService;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -60,9 +65,8 @@ public class IndexController {
 
         if (loginUser != null) {
             Main.setCurrentUser(loginUser);
-            ModelAndView view = new ModelAndView("redirect:/dashboard");
 
-            return view;
+            return checkRepeaters();
         }
 
         ModelAndView login = new ModelAndView("login");
@@ -85,6 +89,7 @@ public class IndexController {
     @RequestMapping(value = "/register", method = RequestMethod.POST)
     public ModelAndView register(@ModelAttribute("user") User user) throws IOException {
         if (userService.getUser(user.getAccountnumber()) == null) {
+            user.setLastMonthCalculated(Calendar.getInstance().get(Calendar.MONTH));
             userService.addUser(user);
             return login(user);
         }
@@ -93,5 +98,40 @@ public class IndexController {
         registerView.addObject("message", message);
         registerView.addObject("user", user);
         return registerView;
+    }
+    
+    public ModelAndView checkRepeaters(){
+        
+        User currentUser = userService.getUser(Main.getAccountnumber());
+        int currentMonth = Calendar.getInstance().get(Calendar.MONTH);
+        int calculatedMonth = currentUser.getLastMonthCalculated();
+        List<HoldTransaction> holdings = new ArrayList<>();
+        
+        while(calculatedMonth != currentMonth){
+            for(Transaction t : currentUser.getTransactions()){
+                
+                switch(t.getRepeating()){
+                    case 12:
+                        holdings.add(new HoldTransaction(t.getIncoming(), 
+                                t.getOutgoing(), t.getDescription(), t.getDatum(), 
+                                t.getCategory().getName(), currentUser));
+                        break;
+                    case 4:
+                       // for(int i = calculated)
+                        break;
+                    case 2:
+                        
+                        break;
+                    case 1:
+                        
+                        break;
+                }
+            }
+            
+            calculatedMonth++;
+            if(calculatedMonth == 12) calculatedMonth = 0;
+        }
+        
+        return new ModelAndView("redirect:/dashboard");
     }
 }

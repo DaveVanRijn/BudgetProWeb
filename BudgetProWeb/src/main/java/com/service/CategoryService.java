@@ -5,6 +5,7 @@
  */
 package com.service;
 
+import System.Main;
 import com.model.Category;
 import java.util.List;
 import org.hibernate.Query;
@@ -28,6 +29,9 @@ public class CategoryService {
     private SessionFactory sessionFactory;
     private String hql;
     private Query query;
+    
+    @Autowired
+    private UserService userService;
 
     private Session getCurrentSession() {
         return sessionFactory.getCurrentSession();
@@ -74,6 +78,7 @@ public class CategoryService {
         if (updateCat != null) {
             updateCat.setIncoming(cat.isIncoming());
             updateCat.setName(cat.getName());
+            updateCat.setUser(cat.getUser());
             getCurrentSession().update(updateCat);
         }
     }
@@ -81,8 +86,7 @@ public class CategoryService {
     public void deleteCategory(int id) {
         Category cat = getCategory(id);
         if (cat != null) {
-            cat.setUser(null);
-            getCurrentSession().delete(cat);
+            userService.getUser(Main.getAccountnumber()).removeCategory(cat);
         }
     }
 }

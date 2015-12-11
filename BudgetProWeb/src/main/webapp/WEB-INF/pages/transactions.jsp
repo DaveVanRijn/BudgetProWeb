@@ -148,11 +148,11 @@
                                     </div>
                                     <div class="form-group">
                                         <label control-label>Inkomend</label>
-                                        <form:input path="incoming" type="text" placeholder="${transaction.incoming}" class="form-control" />
+                                        <form:input path="incoming" type="number" step="0.01" placeholder="${transaction.incoming}" class="form-control" />
                                     </div>
                                     <div class="form-group">
                                         <label control-label>Uitgaand</label>   
-                                        <form:input path="outgoing" type="text" placeholder="${transaction.outgoing}" class="form-control" style="color : #f00" />
+                                        <form:input path="outgoing" type="number" step="0.01" placeholder="${transaction.outgoing}" class="form-control" style="color : #f00" />
                                     </div>
                                     <div class="form-group">
                                         <label control-label>Omschrijving</label>
@@ -175,6 +175,11 @@
                                         <div class="radio">
                                             <form:radiobutton path="repeating" name="herhaling" value="1" label=" Elk jaar" />
                                         </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label style="width: 100%;" control-label>Direct verwerken</label>
+                                        <form:checkbox path="directPay"/>
+                                        <label style="font-weight: normal;">Afschrijven/Bijschrijven</label>
                                     </div>
                                     <div class="form-group">
                                         <label control-label>Datum</label>

@@ -33,23 +33,23 @@ public class User implements Serializable {
     private double balance;
     private int lastMonthCalculated;
 
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "user", orphanRemoval = true)
     @Cascade(CascadeType.ALL)
     @LazyCollection(LazyCollectionOption.FALSE)
     @OrderBy("datum DESC")
     private List<Transaction> transactions;
     
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "user", orphanRemoval = true)
     @Cascade(CascadeType.ALL)
     @LazyCollection(LazyCollectionOption.FALSE)
     private List<HoldTransaction> holdings;
     
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "user", orphanRemoval = true)
     @Cascade(CascadeType.ALL)
     @LazyCollection(LazyCollectionOption.FALSE)
     private List<Category> categories;
     
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "user", orphanRemoval = true)
     @Cascade(CascadeType.ALL)
     @LazyCollection(LazyCollectionOption.FALSE)
     private List<Mortgage> mortgages;

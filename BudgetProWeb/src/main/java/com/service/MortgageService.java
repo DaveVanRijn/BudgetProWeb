@@ -5,6 +5,7 @@
  */
 package com.service;
 
+import System.Main;
 import com.model.Mortgage;
 import java.util.List;
 import org.hibernate.Query;
@@ -28,6 +29,9 @@ public class MortgageService {
     private SessionFactory sessionFactory;
     private String hql;
     private Query query;
+    
+    @Autowired
+    private UserService userService;
     
     private Session getCurrentSession(){
         return sessionFactory.getCurrentSession();
@@ -71,8 +75,7 @@ public class MortgageService {
     public void deleteMortgage(int id){
         Mortgage mort = getMortgage(id);
         if(mort != null){
-            mort.setUser(null);
-            getCurrentSession().delete(mort);
+            userService.getUser(Main.getAccountnumber()).removeMortgage(mort);
         }
     }
 }

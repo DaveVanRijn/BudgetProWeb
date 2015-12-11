@@ -5,6 +5,7 @@
  */
 package com.service;
 
+import System.Main;
 import com.model.Transaction;
 import com.model.User;
 import java.util.ArrayList;
@@ -30,16 +31,20 @@ public class TransactionService {
     private SessionFactory sessionFactory;
     private String hql;
     private Query query;
+    
+    @Autowired
+    private UserService userService;
 
     private Session getCurrentSession() {
         return sessionFactory.getCurrentSession();
     }
-    
+
     /**
      * Add a new transaction to the database
+     *
      * @param trans the transaction
      */
-    public void addTransaction(Transaction trans){
+    public void addTransaction(Transaction trans) {
         getCurrentSession().save(trans);
     }
 
@@ -50,7 +55,7 @@ public class TransactionService {
      */
     public List<Transaction> getTransactions() {
         hql = "from transaction";
-        query = getCurrentSession().createQuery(hql);   
+        query = getCurrentSession().createQuery(hql);
         return query.list();
     }
 
@@ -84,6 +89,7 @@ public class TransactionService {
             updateTransaction.setIncoming(transaction.getIncoming());
             updateTransaction.setOutgoing(transaction.getOutgoing());
             updateTransaction.setRepeating(transaction.getRepeating());
+            updateTransaction.setUser(transaction.getUser());
             getCurrentSession().update(updateTransaction);
         }
     }
@@ -96,8 +102,7 @@ public class TransactionService {
     public void deleteTransaction(int id) {
         Transaction tran = getTransaction(id);
         if (tran != null) {
-            tran.setUser(null);
-            getCurrentSession().delete(tran);
+            userService.getUser(Main.getAccountnumber()).removeTransaction(tran);
         }
     }
 

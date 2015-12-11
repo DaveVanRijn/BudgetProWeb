@@ -5,6 +5,7 @@
  */
 package com.service;
 
+import System.Main;
 import com.model.HoldTransaction;
 import java.util.List;
 import org.hibernate.Query;
@@ -28,6 +29,9 @@ public class HoldTransactionService {
     private SessionFactory sessionFactory;
     private String hql;
     private Query query;
+    
+    @Autowired
+    private UserService userService;
     
     private Session getCurrentSession(){
         return sessionFactory.getCurrentSession();
@@ -59,6 +63,7 @@ public class HoldTransactionService {
             updateHold.setIncoming(hold.getIncoming());
             updateHold.setOutgoing(hold.getOutgoing());
             updateHold.setRepeating(hold.getRepeating());
+            updateHold.setUser(hold.getUser());
             getCurrentSession().update(updateHold);
         }
     }
@@ -66,8 +71,7 @@ public class HoldTransactionService {
     public void deleteHoldTransaction(int id){
         HoldTransaction hold = getHoldTransaction(id);
         if(hold != null){
-            hold.setUser(null);
-            getCurrentSession().delete(hold);
+            userService.getUser(Main.getAccountnumber()).removeHolding(hold);
         }
     }
 }

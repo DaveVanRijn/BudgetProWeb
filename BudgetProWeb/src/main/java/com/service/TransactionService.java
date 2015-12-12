@@ -6,10 +6,10 @@
 package com.service;
 
 import System.Main;
+import com.model.HoldTransaction;
 import com.model.Transaction;
 import com.model.User;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
 import org.hibernate.Query;
 import org.hibernate.Session;
@@ -32,7 +32,7 @@ public class TransactionService {
     private SessionFactory sessionFactory;
     private String hql;
     private Query query;
-    
+
     @Autowired
     private UserService userService;
 
@@ -47,6 +47,9 @@ public class TransactionService {
      */
     public void addTransaction(Transaction trans) {
         getCurrentSession().save(trans);
+        User current = userService.getUser(Main.getAccountnumber());
+        current.setBalance(current.getBalance() + trans.getIncoming() - trans.getOutgoing());
+        userService.updateUser(current);
     }
 
     /**
@@ -85,6 +88,10 @@ public class TransactionService {
     public void updateTransaction(Transaction transaction) {
         Transaction updateTransaction = getTransaction(transaction.getId());
         if (updateTransaction != null) {
+            User current = userService.getUser(Main.getAccountnumber());
+            double oriIncoming = updateTransaction.getIncoming();
+            double oriOutgoing = updateTransaction.getOutgoing();
+
             updateTransaction.setDatum(transaction.getDatum());
             updateTransaction.setDescription(transaction.getDescription());
             updateTransaction.setIncoming(transaction.getIncoming());
@@ -92,6 +99,10 @@ public class TransactionService {
             updateTransaction.setRepeating(transaction.getRepeating());
             updateTransaction.setUser(transaction.getUser());
             getCurrentSession().update(updateTransaction);
+
+            current.setBalance(current.getBalance() - oriIncoming + oriOutgoing
+                    + transaction.getIncoming() - transaction.getOutgoing());
+            userService.updateUser(current);
         }
     }
 
@@ -103,7 +114,11 @@ public class TransactionService {
     public void deleteTransaction(int id) {
         Transaction tran = getTransaction(id);
         if (tran != null) {
-            Main.getCurrentUser().removeTransaction(tran);
+            User current = userService.getUser(Main.getAccountnumber());
+            current.setBalance(current.getBalance() - tran.getIncoming() + tran.getOutgoing());
+            userService.getUser(Main.getAccountnumber()).removeTransaction(tran);
+            userService.updateUser(current);
+
         }
     }
 
@@ -136,8 +151,22 @@ public class TransactionService {
         List<Transaction> temp = new ArrayList<>();
         temp.addAll(transactions);
         while (temp.size() > 5) {
-            temp.remove(0);
+            temp.remove(temp.size() - 1);
         }
         return temp;
+    }
+
+    public Transaction holdToTransaction(HoldTransaction hold) {
+
+        Transaction tran = new Transaction();
+        tran.setCategory(hold.getCategory());
+        tran.setDatum(hold.getDatum());
+        tran.setDescription(hold.getDescription());
+        tran.setIncoming(hold.getIncoming());
+        tran.setOutgoing(hold.getOutgoing());
+        tran.setRepeating(0);
+        tran.setUser(hold.getUser());
+
+        return tran;
     }
 }

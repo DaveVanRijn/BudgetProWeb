@@ -33,7 +33,6 @@ public class Transaction implements Serializable{
     private String description;
     private String datum;
     private int repeating;
-    private boolean directPay;
     
     @ManyToOne
     @LazyCollection(LazyCollectionOption.FALSE)
@@ -51,13 +50,12 @@ public class Transaction implements Serializable{
     }
 
     public Transaction(double incoming, double outgoing, String description, 
-            String datum, int repeating, boolean directPay, Category category) {
+            String datum, int repeating, Category category) {
         this.incoming = incoming;
         this.outgoing = outgoing;
         this.description = description;
         this.datum = datum;
         this.repeating = repeating;
-        this.directPay = directPay;
         this.category = category;
     }
 
@@ -108,14 +106,6 @@ public class Transaction implements Serializable{
     public void setRepeating(int repeating) {
         this.repeating = repeating;
     }
-    
-    public boolean isDirectPay(){
-        return directPay;
-    }
-    
-    public void setDirectPay(boolean directPay){
-        this.directPay = directPay;
-    }
 
     public User getUser() {
         return user;
@@ -132,6 +122,4 @@ public class Transaction implements Serializable{
     public void setCategory(Category category) {
         this.category = category;
     }
-    
-    
 }

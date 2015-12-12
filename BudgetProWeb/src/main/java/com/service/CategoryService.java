@@ -86,7 +86,7 @@ public class CategoryService {
     public void deleteCategory(int id) {
         Category cat = getCategory(id);
         if (cat != null) {
-            Main.getCurrentUser().removeCategory(cat);
+            userService.getUser(Main.getAccountnumber()).removeCategory(cat);
         }
     }
 }

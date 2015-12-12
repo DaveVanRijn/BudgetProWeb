@@ -44,7 +44,7 @@ public class HoldTransactionService {
     }
     
     public HoldTransaction getHoldTransaction(int id){
-        hql = "from holdtransaction where h.id = :id";
+        hql = "from holdtransaction h where h.id = :id";
         query = getCurrentSession().createQuery(hql);
         query.setParameter("id", id);
         List<HoldTransaction> list = query.list();
@@ -70,7 +70,13 @@ public class HoldTransactionService {
     public void deleteHoldTransaction(int id){
         HoldTransaction hold = getHoldTransaction(id);
         if(hold != null){
-            Main.getCurrentUser().removeHolding(hold);
+            userService.getUser(Main.getAccountnumber()).removeHolding(hold);
+        }
+    }
+    
+    public void saveAllHoldTransactions(List<HoldTransaction> holdings){
+        for(HoldTransaction h : holdings){
+            getCurrentSession().save(h);
         }
     }
 }

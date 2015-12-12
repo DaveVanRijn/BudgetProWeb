@@ -29,18 +29,21 @@ public class HoldTransaction implements Serializable {
     private double outgoing;
     private String description;
     private String datum;
-    private String category;
     
     @ManyToOne
     @LazyCollection(LazyCollectionOption.FALSE)
     private User user;
+    
+    @ManyToOne
+    @LazyCollection(LazyCollectionOption.FALSE)
+    private Category category;
 
     public HoldTransaction() {
         super();
     }
 
     public HoldTransaction(double incoming, double outgoing, String description, 
-            String datum, String category, User user) {
+            String datum, Category category, User user) {
         this.incoming = incoming;
         this.outgoing = outgoing;
         this.description = description;
@@ -89,11 +92,11 @@ public class HoldTransaction implements Serializable {
         this.datum = datum;
     }
 
-    public String getCategory() {
+    public Category getCategory() {
         return category;
     }
 
-    public void setCategory(String category) {
+    public void setCategory(Category category) {
         this.category = category;
     }
 

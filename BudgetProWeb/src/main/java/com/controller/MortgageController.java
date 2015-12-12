@@ -36,7 +36,7 @@ public class MortgageController {
     public ModelAndView listMortgages(){
         ModelAndView view = new ModelAndView("mortgages");
         
-        view.addObject("user", Main.getCurrentUser());
+        view.addObject("user", userService.getUser(Main.getAccountnumber()));
         view.addObject("formTitle", newMortgage);
         view.addObject("mortgage", new Mortgage());
         
@@ -60,7 +60,7 @@ public class MortgageController {
     public ModelAndView editMortgage(@PathVariable Integer id){
         
         ModelAndView view = new ModelAndView("mortgages");
-        view.addObject("user", Main.getCurrentUser());
+        view.addObject("user", userService.getUser(Main.getAccountnumber()));
         view.addObject("formTitle", editMortgage);
         view.addObject("mortgage", mortgageService.getMortgage(id));
         

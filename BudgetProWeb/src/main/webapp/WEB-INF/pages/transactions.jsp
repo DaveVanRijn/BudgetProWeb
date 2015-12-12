@@ -177,11 +177,6 @@
                                         </div>
                                     </div>
                                     <div class="form-group">
-                                        <label style="width: 100%;" control-label>Direct verwerken</label>
-                                        <form:checkbox path="directPay"/>
-                                        <label style="font-weight: normal;">Afschrijven/Bijschrijven</label>
-                                    </div>
-                                    <div class="form-group">
                                         <label control-label>Datum</label>
                                         <form:input path="datum" type="date" value="${transaction.datum}" class="form-control"/>
                                     </div>

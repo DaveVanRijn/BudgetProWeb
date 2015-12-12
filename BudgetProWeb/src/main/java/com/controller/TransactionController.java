@@ -11,6 +11,8 @@ import com.model.Category;
 import com.model.Transaction;
 import com.service.TransactionService;
 import com.service.UserService;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -50,7 +52,7 @@ public class TransactionController {
     public ModelAndView getList() {
         ModelAndView transList = new ModelAndView("transactions");
 
-        List<Category> cats = Main.getCurrentUser().getCategories();
+        List<Category> cats = userService.getUser(Main.getAccountnumber()).getCategories();
         List<Category> incoming = new ArrayList<>();
         List<Category> outgoing = new ArrayList<>();
 
@@ -62,7 +64,7 @@ public class TransactionController {
             outgoing.add(cat);
         }
 
-        transList.addObject("user", Main.getCurrentUser());
+        transList.addObject("user", userService.getUser(Main.getAccountnumber()));
         transList.addObject("incomingCat", incoming);
         transList.addObject("outgoingCat", outgoing);
         transList.addObject("formTitle", "Nieuwe transactie");
@@ -74,7 +76,7 @@ public class TransactionController {
 
     @RequestMapping(value = "/add", method = RequestMethod.POST)
     public ModelAndView addTransaction(@ModelAttribute("transaction") Transaction transaction) {
-        transaction.setUser(Main.getCurrentUser());
+        transaction.setUser(userService.getUser(Main.getAccountnumber()));
 
         if (transactionService.getTransaction(transaction.getId()) != null) {
             String date = transaction.getDatum();
@@ -86,11 +88,8 @@ public class TransactionController {
         } else {
             String date = transaction.getDatum();
             Calendar cal = Calendar.getInstance();
-            int hour = cal.get(Calendar.HOUR_OF_DAY);
-            int minute = cal.get(Calendar.MINUTE);
-            int second = cal.get(Calendar.SECOND);
-            date += " " + Integer.toString(hour) + ":" + Integer.toString(minute)
-                    + ":" + Integer.toString(second);
+            DateFormat timeForm = new SimpleDateFormat("kk:mm:ss");
+            date += " " + timeForm.format(cal.getTime());
 
             transaction.setDatum(date);
             transactionService.addTransaction(transaction);
@@ -107,7 +106,7 @@ public class TransactionController {
         backupDate = transaction.getDatum();
         transaction.setDatum(backupDate.split(" ")[0]);
 
-        List<Category> cats = Main.getCurrentUser().getCategories();
+        List<Category> cats = userService.getUser(Main.getAccountnumber()).getCategories();
         List<Category> incoming = new ArrayList<>();
         List<Category> outgoing = new ArrayList<>();
 
@@ -119,7 +118,7 @@ public class TransactionController {
             outgoing.add(cat);
         }
 
-        transList.addObject("user", Main.getCurrentUser());
+        transList.addObject("user", userService.getUser(Main.getAccountnumber()));
         transList.addObject("incomingCat", incoming);
         transList.addObject("outgoingCat", outgoing);
         transList.addObject("formTitle", "Transactie Details");

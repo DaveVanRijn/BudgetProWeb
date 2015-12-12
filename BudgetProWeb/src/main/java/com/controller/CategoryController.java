@@ -37,7 +37,7 @@ public class CategoryController {
     public ModelAndView categoryList() {
         ModelAndView view = new ModelAndView("categories");
 
-        view.addObject("user", Main.getCurrentUser());
+        view.addObject("user", userService.getUser(Main.getAccountnumber()));
         view.addObject("formTitle", newCategory);
         view.addObject("category", new Category());
 
@@ -46,14 +46,14 @@ public class CategoryController {
 
     @RequestMapping(value = "/add", method = RequestMethod.POST)
     public ModelAndView addCategory(@ModelAttribute("category") Category category) {
-        category.setUser(Main.getCurrentUser());
+        category.setUser(userService.getUser(Main.getAccountnumber()));
 
         if (categoryService.getCategory(category.getId()) == null) {
             if (categoryService.getCategory(category.getName(), category.isIncoming()) == null) {
                 categoryService.addCategory(category);
             } else {
                 ModelAndView view = new ModelAndView("categories");
-                view.addObject("user", Main.getCurrentUser());
+                view.addObject("user", userService.getUser(Main.getAccountnumber()));
                 view.addObject("formTitle", newCategory);
                 view.addObject("category", category);
                 view.addObject("message", "Er bestaat al een categorie met deze naam!");
@@ -64,7 +64,7 @@ public class CategoryController {
                 categoryService.updateCategory(category);
             } else {
                 ModelAndView view = new ModelAndView("categories");
-                view.addObject("user", Main.getCurrentUser());
+                view.addObject("user", userService.getUser(Main.getAccountnumber()));
                 view.addObject("formTitle", editCategory);
                 view.addObject("category", category);
                 view.addObject("message", "Er bestaat al een categorie met deze naam!");
@@ -81,7 +81,7 @@ public class CategoryController {
         ModelAndView view = new ModelAndView("categories");
         
         Category category = categoryService.getCategory(id);
-        view.addObject("user", Main.getCurrentUser());
+        view.addObject("user", userService.getUser(Main.getAccountnumber()));
         view.addObject("formTitle", editCategory);
         view.addObject("category", category);
 

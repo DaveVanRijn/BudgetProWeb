@@ -84,6 +84,7 @@ public class UserService {
             updateUser.setFirstname(user.getFirstname());
             updateUser.setInfix(user.getInfix());
             updateUser.setLastname(user.getLastname());
+            updateUser.setLastMonthCalculated(user.getLastMonthCalculated());
 
             getCurrentSession().update(updateUser);
         }

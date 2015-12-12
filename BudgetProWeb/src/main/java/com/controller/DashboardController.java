@@ -23,10 +23,12 @@ public class DashboardController {
 
     @Autowired
     private TransactionService transactionService;
+    @Autowired
+    private UserService userService;
 
     @RequestMapping(value = "/start")
     public ModelAndView dashboard() {
-        double[] stats = transactionService.getTotalOutAndIn(Main.getCurrentUser());
+        double[] stats = transactionService.getTotalOutAndIn(userService.getUser(Main.getAccountnumber()));
 
         double outgoing = stats[0];
         double incoming = stats[1];
@@ -34,8 +36,8 @@ public class DashboardController {
         ModelAndView dashboardView = new ModelAndView("dashboard");
         dashboardView.addObject("outgoing", outgoing);
         dashboardView.addObject("incoming", incoming);
-        dashboardView.addObject("transactionList", transactionService.getRecentTransactions(Main.getCurrentUser()));
-        dashboardView.addObject("user", Main.getCurrentUser());
+        dashboardView.addObject("transactionList", transactionService.getRecentTransactions(userService.getUser(Main.getAccountnumber())));
+        dashboardView.addObject("user", userService.getUser(Main.getAccountnumber()));
 
         return dashboardView;
 

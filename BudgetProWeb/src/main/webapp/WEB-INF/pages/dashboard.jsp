@@ -57,7 +57,8 @@
                     </div>
                 </div>
                 <h1>Dashboard</h1>
-                V0.1 Beta
+                </br>
+                V0.1.1 Beta
             </div>
             <div class="side">
                 <div class="sidebar-wrapper">
@@ -69,88 +70,88 @@
                         </li>
                         <li>
                             <a href="${pageContext.request.contextPath}/transaction/list" data-toggle="tooltip" data-placement="right" title="Transacties" data-original-title="Transacties">
-                                <i class="fa fa-map-marker"></i>
+                                <i class="fa fa-euro"></i>
                             </a>
                         </li>
                         <li>
                             <a href="${pageContext.request.contextPath}/category/list" data-toggle="tooltip" data-placement="right" title="Categorieën" data-original-title="Categorieën">
-                                <i class="fa fa-group"></i>
+                                <i class="fa fa-list"></i>
                             </a>
                         </li>
                         <li>
-                            <a href="${pageContext.request.contextPath}/mortgage/list" data-toggle="tooltip" data-placement="right" title="" data-original-title="Startpagina">
-                                <i class="fa fa-pencil"></i>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="${pageContext.request.contextPath}" data-toggle="tooltip" data-placement="right" title="" data-original-title="Startpagina">
-                                <i class="fa fa-flash"></i>
+                            <a href="${pageContext.request.contextPath}/mortgage/list" data-toggle="tooltip" data-placement="right" title="Hypotheken" data-original-title="Hypotheken">
+                                <i class="fa fa-money"></i>
                             </a>
                         </li>
                     </ul>
                 </div>
             </div>
             <div class="main-content">
-                <div class="order-details">
-                    <div class="row">
-                        <div class="col-md-7">
-                            <div class="widget widget-orange">
-                                <div class="widget-title">
-                                    <i class="fa fa-group"></i>Recente Transacties
-                                </div>
-                                <div class="widget-content">
-                                    <div class="table-responsive">
-                                        <table class="table">
-                                            <thead>
-                                                <tr>
-                                                    <th>Datum</th>
-                                                    <th>Binnenkomend</th>
-                                                    <th>Uitgaand</th>
-                                                    <th>Vast/Variabel</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                <c:forEach  var="transaction" items="${transactionList}">
-                                                    <tr>
-                                                        <td>${transaction.datum}</td>
-                                                        <td>
-                                                            <script>
-                                                                document.write(${transaction.incoming}.toFixed(2));
-                                                            </script>
-                                                        </td>
-                                                        <td>
-                                                            <script>
-                                                                document.write(${transaction.outgoing}.toFixed(2));
-                                                            </script>
-                                                        </td>
-                                                        <td>
-                                                            <script>
-                                                                if (${transaction.repeating} > 0) {
-                                                                    document.write("Herhalend");
-                                                                } else {
-                                                                    document.write("Eenmalig");
-                                                                }
-                                                            </script>
-                                                        </td>
-                                                    </tr>
-                                                </c:forEach>
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                </div>
+                <div class="row">
+                    <div class="col-md-7">
+                        <div class="widget widget-orange">
+                            <div class="widget-title">
+                                <i class="fa fa-group"></i>Recente Transacties
                             </div>
-                        </div>
-                        <div class="col-md-5">
-                            <div class="widget widget-orange">
-                                <div class="widget-title">
-                                    <i class="fa fa-group"></i>Statistieken
-                                </div>
-                                <div class="widget-content">
-                                    <div id="piechart_3d" style="height: 225px;"</div>
+                            <div class="widget-content">
+                                <div class="table-responsive" style="height: 225px;">
+                                    <table class="table">
+                                        <thead>
+                                            <tr>
+                                                <th>Datum</th>
+                                                <th>Binnenkomend</th>
+                                                <th>Uitgaand</th>
+                                                <th>Vast/Variabel</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <c:forEach  var="transaction" items="${transactionList}">
+                                                <tr>
+                                                    <td>${transaction.datum}</td>
+                                                    <td>
+                                                        <script>
+                                                            document.write(${transaction.incoming}.toFixed(2));
+                                                        </script>
+                                                    </td>
+                                                    <td>
+                                                        <script>
+                                                            document.write(${transaction.outgoing}.toFixed(2));
+                                                        </script>
+                                                    </td>
+                                                    <td>
+                                                        <script>
+                                                            if (${transaction.repeating} > 0) {
+                                                                document.write("Herhalend");
+                                                            } else {
+                                                                document.write("Eenmalig");
+                                                            }
+                                                        </script>
+                                                    </td>
+                                                </tr>
+                                            </c:forEach>
+                                        </tbody>
+                                    </table>
                                 </div>
                             </div>
                         </div>
                     </div>
+                    <div class="col-md-5">
+                        <div class="widget widget-orange">
+                            <div class="widget-title">
+                                <i class="fa fa-group"></i>Statistieken
+                            </div>
+                            <div class="widget-content">
+                                <div id="piechart_3d" style="height: 225px;"</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div>
+                    <a href="${pageContext.request.contextPath}/transaction/list" class="btn btn-action btn-lg btn-info"><i class="fa fa-euro"></i> Transacties</a>
+                    <a href="${pageContext.request.contextPath}/categorie/list" class="btn btn-action btn-lg btn-info"><i class="fa fa fa-list"></i> Categorieën</a>
+                    <a href="${pageContext.request.contextPath}/mortgage/list" class="btn btn-action btn-lg btn-info"><i class="fa fa-money"></i> Hypotheken</a>
                 </div>
             </div>
             <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>

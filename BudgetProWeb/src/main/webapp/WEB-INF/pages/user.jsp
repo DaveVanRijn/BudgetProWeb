@@ -39,28 +39,23 @@
                 <div class="sidebar-wrapper">
                     <ul>
                         <li>
-                            <a href="${pageContext.request.contextPath}/dashboard" data-toggle="tooltip" data-placement="right" title="Startpagina" data-original-title="Startpagina">
+                            <a href="${pageContext.request.contextPath}/dashboard" data-toggle="tooltip" data-placement="right" title="" data-original-title="Startpagina">
                                 <i class="fa fa-home"></i>
                             </a>
                         </li>
                         <li>
                             <a href="${pageContext.request.contextPath}/transaction/list" data-toggle="tooltip" data-placement="right" title="Transacties" data-original-title="Transacties">
-                                <i class="fa fa-map-marker"></i>
+                                <i class="fa fa-euro"></i>
                             </a>
                         </li>
                         <li>
-                            <a href="${pageContext.request.contextPath}/category/list" data-toggle="tooltip" data-placement="right" title="Categorieën" data-original-title="Categorieën">                                
-                                <i class="fa fa-group"></i>
+                            <a href="${pageContext.request.contextPath}/category/list" data-toggle="tooltip" data-placement="right" title="Categorieën" data-original-title="Categorieën">
+                                <i class="fa fa-list"></i>
                             </a>
                         </li>
                         <li>
-                            <a href="${pageContext.request.contextPath}" data-toggle="tooltip" data-placement="right" title="" data-original-title="Startpagina">
-                                <i class="fa fa-pencil"></i>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="${pageContext.request.contextPath}" data-toggle="tooltip" data-placement="right" title="" data-original-title="Startpagina">
-                                <i class="fa fa-flash"></i>
+                            <a href="${pageContext.request.contextPath}/mortgage/list" data-toggle="tooltip" data-placement="right" title="Hypotheken" data-original-title="Hypotheken">
+                                <i class="fa fa-money"></i>
                             </a>
                         </li>
                     </ul>
@@ -94,17 +89,12 @@
                                     <label control-label>Saldo</label>
                                     <form:input path="balance" type="number" step="0.01" class="form-control" required="true"/>
                                 </div>
-                                <div class="row">
-                                    <div class="form-group">
-                                        <form:button type="submit" class="btn btn-primary col-md-4 col-md-offset-4">Opslaan</form:button>
-                                        </div>
+                                <div class="form-group">
+                                    <form:button type="submit" class="btn btn-primary"><i class="fa fa-save"></i>Opslaan</form:button>
                                     </div>
-                                        </br>
-                                        <div class="row">
-                                            <div class="form-group">
-                                                <a onclick="return confirm('Weet je zeker dat je je account wil verwijderen?')" href="${pageContext.request.contextPath}/user/delete/${user.accountnumber}" class="btn btn-danger col-md-4 col-md-offset-4"><i class="fa fa-times"></i>Verwijderen</a>
-                                            </div>
-                                        </div>
+                                    <div class="form-group">
+                                        <a onclick="return confirm('Weet je zeker dat je je account wil verwijderen?')" href="${pageContext.request.contextPath}/user/delete/${user.accountnumber}" class="btn btn-danger"><i class="fa fa-times"></i>Verwijderen</a>
+                                </div>
                             </form:form>
                         </div>
                     </div>

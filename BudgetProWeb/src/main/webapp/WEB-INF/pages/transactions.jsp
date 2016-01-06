@@ -39,28 +39,23 @@
                 <div class="sidebar-wrapper">
                     <ul>
                         <li>
-                            <a href="${pageContext.request.contextPath}/dashboard" data-toggle="tooltip" data-placement="right" title="Startpagina" data-original-title="Startpagina">
+                            <a href="${pageContext.request.contextPath}/dashboard" data-toggle="tooltip" data-placement="right" title="" data-original-title="Startpagina">
                                 <i class="fa fa-home"></i>
                             </a>
                         </li>
                         <li>
                             <a href="${pageContext.request.contextPath}/transaction/list" data-toggle="tooltip" data-placement="right" title="Transacties" data-original-title="Transacties">
-                                <i class="fa fa-map-marker"></i>
+                                <i class="fa fa-euro"></i>
                             </a>
                         </li>
                         <li>
-                            <a href="${pageContext.request.contextPath}/category/list" data-toggle="tooltip" data-placement="right" title="Categorieën" data-original-title="Categorieën">                                
-                                <i class="fa fa-group"></i>
+                            <a href="${pageContext.request.contextPath}/category/list" data-toggle="tooltip" data-placement="right" title="Categorieën" data-original-title="Categorieën">
+                                <i class="fa fa-list"></i>
                             </a>
                         </li>
                         <li>
-                            <a href="${pageContext.request.contextPath}" data-toggle="tooltip" data-placement="right" title="" data-original-title="Startpagina">
-                                <i class="fa fa-pencil"></i>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="${pageContext.request.contextPath}" data-toggle="tooltip" data-placement="right" title="" data-original-title="Startpagina">
-                                <i class="fa fa-flash"></i>
+                            <a href="${pageContext.request.contextPath}/mortgage/list" data-toggle="tooltip" data-placement="right" title="Hypotheken" data-original-title="Hypotheken">
+                                <i class="fa fa-money"></i>
                             </a>
                         </li>
                     </ul>
@@ -74,7 +69,7 @@
                                 <i class="fa fa-group"></i> Transacties
                             </div>
                             <div class="widget-content">
-                                <div class="table-responsive">
+                                <div class="table-responsive" style="height: 395px; overflow: auto;">
                                     <table class="table">
                                         <thead>
                                             <tr>
@@ -112,7 +107,7 @@
                                                     <td>${transaction.category.name}</td>
                                                     <td>
                                                         <a href="${pageContext.request.contextPath}/transaction/edit/${transaction.id}" class="btn btn-iconed btn-primary btn-xs"><i class="fa fa-search"></i>Details</a>
-                                                        <a href="${pageContext.request.contextPath}/transaction/delete/${transaction.id}" class="btn btn-danger btn-xs"><i class="fa fa-times"></i>Verwijderen</a>
+                                                        <a onclick="return confirm('Weet je zeker dat je deze transactie wil verwijderen?')" href="${pageContext.request.contextPath}/transaction/delete/${transaction.id}" class="btn btn-danger btn-xs"><i class="fa fa-times"></i>Verwijderen</a>
                                                     </td>
                                                 </tr>
                                             </c:forEach>
@@ -147,7 +142,7 @@
                                         </form:select>
                                     </div>
                                     <div class="form-group">
-                                        <label control-label>Inkomend</label>
+                                        <label control-label>Binnenkomend</label>
                                         <form:input path="incoming" type="number" step="0.01" placeholder="${transaction.incoming}" class="form-control" />
                                     </div>
                                     <div class="form-group">
@@ -161,7 +156,7 @@
                                     <div class="form-group">
                                         <label control-label>Herhaling</label>
                                         <div class="radio">
-                                            <form:radiobutton path="repeating" name="herhaling" value="0" label=" Nooit" />
+                                            <form:radiobutton path="repeating" name="herhaling" value="0" label=" Eenmalig" />
                                         </div>
                                         <div class="radio">
                                             <form:radiobutton path="repeating" name="herhaling" value="12" label=" Elke maand" />
@@ -180,17 +175,11 @@
                                         <label control-label>Datum</label>
                                         <form:input path="datum" type="date" value="${transaction.datum}" class="form-control"/>
                                     </div>
-                                    <div class="row">
-                                        <div class="col-md-4">
-                                            <div class="form-group">
-                                                <form:button type="submit" class="btn btn-primary">Opslaan</form:button>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-4">
-                                                <div class="form-group">
-                                                    <a href="${pageContext.request.contextPath}/transaction/list" class="btn  btn-warning">Annuleren</a>
-                                            </div>
+                                    <div class="form-group">
+                                        <form:button type="submit" class="btn btn-primary"><i class="fa fa-save"></i>Opslaan</form:button>
                                         </div>
+                                        <div class="form-group">
+                                            <a href="${pageContext.request.contextPath}/transaction/list" class="btn  btn-danger"><i class="fa fa-times"></i>Annuleren</a>
                                     </div>
                                 </form:form>
                             </div>

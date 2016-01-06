@@ -43,25 +43,25 @@
                                 <div class="form-group">
                                     <label class="col-md-4 control-label">Voornaam</label>
                                     <div class="col-md-8">
-                                        <form:input path="firstname" type="text" placeholder="Voornaam" class="form-control" required="true" pattern="[a-zA-Z]*"/>
+                                        <form:input path="firstname" type="text" placeholder="Voornaam" class="form-control" required="true"/>
                                     </div>
                                 </div>
                                 <div class="form-group">
                                     <label class="col-md-4 control-label">Tussenvoegsel</label>
                                     <div class="col-md-8">
-                                        <form:input path="infix" type="text" placeholder="Tussenvoegsel" class="form-control" pattern="[a-z]*"/>
+                                        <form:input path="infix" type="text" placeholder="Tussenvoegsel" class="form-control"/>
                                     </div>
                                 </div>
                                 <div class="form-group">
                                     <label class="col-md-4 control-label">Achternaam</label>
                                     <div class="col-md-8">
-                                        <form:input path="lastname" type="text" placeholder="Achternaam" class="form-control" required="true" pattern="[a-zA-Z]*"/>
+                                        <form:input path="lastname" type="text" placeholder="Achternaam" class="form-control" required="true"/>
                                     </div>
                                 </div>
                                 <div class="form-group">
-                                    <label class="col-md-4 control-label">Huidig budget</label>
+                                    <label class="col-md-4 control-label">Huidig saldo</label>
                                     <div class="col-md-8">
-                                        <form:input path="balance" type="text" placeholder="Huidig budget" class="form-control" required="true" pattern="\d+(\.\d{2})?"/>
+                                        <form:input path="balance" type="number" steps="0.01" class="form-control" required="true"/>
                                     </div>
                                 </div>
                                 <div class="form-group">

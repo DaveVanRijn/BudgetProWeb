@@ -6,7 +6,9 @@
 package com.controller;
 
 import System.Main;
+import com.model.Category;
 import com.model.HoldTransaction;
+import com.model.Mortgage;
 import com.model.Transaction;
 import com.model.User;
 import com.service.HoldTransactionService;
@@ -42,7 +44,7 @@ public class IndexController {
     private HoldTransactionService holdService;
 
     @RequestMapping(value = "/")
-    public ModelAndView home(){
+    public ModelAndView home() {
 
         ModelAndView login = new ModelAndView("login");
         login.addObject("user", new User());
@@ -114,10 +116,10 @@ public class IndexController {
         List<HoldTransaction> holdings = new ArrayList<>();
 
         while (calculatedMonth != currentMonth) {
+            DateFormat dateForm = new SimpleDateFormat("yyyy-MM-dd kk:mm:ss");
             for (Transaction t : currentUser.getTransactions()) {
                 if (t.getRepeating() > 0) {
                     try {
-                        DateFormat dateForm = new SimpleDateFormat("yyyy-MM-dd kk:mm:ss");
                         DateFormat form = new SimpleDateFormat("yyyy-MM-dd");
                         Calendar tranDate = Calendar.getInstance();
                         tranDate.setTime(dateForm.parse(t.getDatum()));
@@ -179,6 +181,63 @@ public class IndexController {
                     } catch (ParseException ex) {
                         ex.printStackTrace();
                     }
+                }
+            }
+            for (Mortgage m : userService.getUser(Main.getAccountnumber()).getMortgages()) {
+                Calendar cal = Calendar.getInstance();
+                cal.set(Calendar.HOUR, 0);
+                cal.set(Calendar.MINUTE, 0);
+                cal.set(Calendar.SECOND, 0);
+                cal.set(Calendar.DAY_OF_MONTH, 1);
+                cal.set(Calendar.MONTH, calculatedMonth);
+                String description = m.getDescription();
+                Category cat = Main.getCategory("Hypotheek", false);
+                double interest;
+                double total;
+                double premie;
+                double redemption;
+                switch (m.getKind()) {
+                    case "Aflossingsvrij":
+                        //Interest
+                        interest = m.calcInterest();
+                        description += "\nRente hypotheek '" + m.getName() + "'"
+                                + "\nMaand " + calculatedMonth + 1;
+                        holdings.add(new HoldTransaction(0, interest, description,
+                                dateForm.format(cal.getTime()), cat, currentUser));
+                        break;
+                    case "Annuïteit":
+                        //Annuity
+                        description += "\nAnnuïteit hypotheek '" + m.getName() + "'"
+                                + "\nMaand " + calculatedMonth + 1;
+                        total = m.getAnnuity();
+                        holdings.add(new HoldTransaction(0, total, description,
+                                dateForm.format(cal.getTime()), cat, currentUser));
+                        break;
+                    case "Lineair":
+                        //Redemptiom
+                        redemption = m.getRedemption();
+                        String temp = description + "\nAflossing hypotheek '" + m.getName() + "'"
+                                + "\nMaand " + calculatedMonth + 1;
+                        holdings.add(new HoldTransaction(0, redemption, temp,
+                                dateForm.format(cal.getTime()), cat, currentUser));
+                        //Interest
+                        description += "\nRente hypotheek '" + m.getName() + "'"
+                                + "\nMaand " + calculatedMonth + 1;
+                        interest = m.calcInterest();
+                        holdings.add(new HoldTransaction(0, interest, description,
+                                dateForm.format(cal.getTime()), cat, currentUser));
+                        break;
+                    case "Spaar":
+                        total = m.getAnnuity();
+                        //Interest 
+                        interest = m.calcInterest();
+                        //Premie
+                        premie = total - interest;
+                        description += "\nPremie hypotheek '" + m.getName() + "'"
+                                + "\nMaand " + calculatedMonth + 1;
+                        holdings.add(new HoldTransaction(0, total, description,
+                                dateForm.format(cal.getTime()), cat, currentUser));
+                        break;
                 }
             }
 

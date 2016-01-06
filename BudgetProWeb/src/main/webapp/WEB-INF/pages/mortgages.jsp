@@ -40,28 +40,23 @@
                 <div class="sidebar-wrapper">
                     <ul>
                         <li>
-                            <a href="${pageContext.request.contextPath}/dashboard" data-toggle="tooltip" data-placement="right" title="Startpagina" data-original-title="Startpagina">
+                            <a href="${pageContext.request.contextPath}/dashboard" data-toggle="tooltip" data-placement="right" title="" data-original-title="Startpagina">
                                 <i class="fa fa-home"></i>
                             </a>
                         </li>
                         <li>
                             <a href="${pageContext.request.contextPath}/transaction/list" data-toggle="tooltip" data-placement="right" title="Transacties" data-original-title="Transacties">
-                                <i class="fa fa-map-marker"></i>
+                                <i class="fa fa-euro"></i>
                             </a>
                         </li>
                         <li>
                             <a href="${pageContext.request.contextPath}/category/list" data-toggle="tooltip" data-placement="right" title="Categorieën" data-original-title="Categorieën">
-                                <i class="fa fa-group"></i>
+                                <i class="fa fa-list"></i>
                             </a>
                         </li>
                         <li>
-                            <a href="${pageContext.request.contextPath}" data-toggle="tooltip" data-placement="right" title="" data-original-title="Startpagina">
-                                <i class="fa fa-pencil"></i>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="${pageContext.request.contextPath}" data-toggle="tooltip" data-placement="right" title="" data-original-title="Startpagina">
-                                <i class="fa fa-flash"></i>
+                            <a href="${pageContext.request.contextPath}/mortgage/list" data-toggle="tooltip" data-placement="right" title="Hypotheken" data-original-title="Hypotheken">
+                                <i class="fa fa-money"></i>
                             </a>
                         </li>
                     </ul>
@@ -75,7 +70,7 @@
                                 <i class="fa fa-group"></i> Hypotheken
                             </div>
                             <div class="widget-content">
-                                <div class="table-responsive">
+                                <div class="table-responsive" style="height: 395px; overflow: auto;">
                                     <table class="table">
                                         <thead>
                                             <tr>
@@ -126,7 +121,7 @@
                                     </div>
                                     <div class="form-group">
                                         <label control-label>Naam</label>
-                                        <form:input path="name" type="text" class="form-control" />
+                                        <form:input path="name" type="text" class="form-control" required="true"/>
                                     </div>
                                     <div class="form-group">
                                         <label control-label>Soort</label>
@@ -160,14 +155,14 @@
                                         <form:input path="interest" type="number" step="any" min="0" class="form-control"/>
                                     </div>
                                     <div class="form-group">
-                                        <label control-label>Annuïteit</label>
+                                        <label control-label>Annuïteit/Spaarpremie</label>
                                         <form:input path="annuity" type="number" step="any" min="0" class="form-control"/>
                                     </div>
                                     <div class="form-group">
-                                        <form:button type="submit" class="btn btn-primary">Opslaan</form:button>
+                                        <form:button type="submit" class="btn btn-primary"><i class="fa fa-save"></i>Opslaan</form:button>
                                         </div>
                                         <div class="form-group">
-                                            <a href="${pageContext.request.contextPath}/mortgage/list" class="btn  btn-warning">Annuleren</a>
+                                            <a href="${pageContext.request.contextPath}/mortgage/list" class="btn btn-danger"><i class="fa fa-times"></i>Annuleren</a>
                                     </div>
                                 </form:form>
                             </div>

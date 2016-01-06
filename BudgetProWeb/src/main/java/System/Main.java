@@ -5,6 +5,7 @@
  */
 package System;
 
+import com.model.Category;
 import com.model.User;
 
 /**
@@ -30,6 +31,16 @@ public class Main {
     public static long getAccountnumber(){
         return getCurrentUser().getAccountnumber();
     }
+    
+    public static Category getCategory(String name, boolean incoming){
+        for(Category c : currentUser.getCategories()){
+            if(c.getName().equals(name) && c.isIncoming() == incoming){
+                return c;
+            }
+        }
+        return null;
+    }
+    
 }
 
 

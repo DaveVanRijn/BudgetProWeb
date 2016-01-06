@@ -123,7 +123,9 @@ public class Mortgage implements Serializable{
         this.user = user;
     }
     
-    
-    
+    public double calcInterest(){
+        double monthlyInterest = (interest / 12) / 100;
+        return residualDebt * monthlyInterest;
+    }
     
 }

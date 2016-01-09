@@ -6,6 +6,9 @@
 package com.service;
 
 import com.model.User;
+import java.math.RoundingMode;
+import java.text.DecimalFormat;
+import java.text.ParseException;
 import java.util.List;
 import org.hibernate.Query;
 import org.hibernate.Session;
@@ -68,15 +71,19 @@ public class UserService {
      */
     public void addUser(User user) {
         if (user != null) {
+            user.setBalance(setDecimal(user.getBalance()));
             getCurrentSession().save(user);
         }
     }
 
     /**
      * Update an excisting user
+     *
      * @param user
      */
     public void updateUser(User user) {
+        user.setBalance(setDecimal(user.getBalance()));
+        
         User updateUser = getUser(user.getAccountnumber());
 
         if (updateUser != null) {
@@ -92,13 +99,26 @@ public class UserService {
 
     /**
      * Delete the user with specified accountnumber
-     * @param accountnumber 
+     *
+     * @param accountnumber
      */
     public void deleteUser(long accountnumber) {
         User user = getUser(accountnumber);
         if (user != null) {
             getCurrentSession().delete(user);
         }
+    }
+
+    private double setDecimal(double number) {
+        try {
+            DecimalFormat deciForm = new DecimalFormat("0.00");
+            deciForm.setRoundingMode(RoundingMode.HALF_UP);
+            deciForm.parse(Double.toString(number));
+        } catch (ParseException ex) {
+            ex.printStackTrace();
+        }
+
+        return number;
     }
 
 }

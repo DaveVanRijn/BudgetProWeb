@@ -6,7 +6,10 @@
 package com.model;
 
 import java.io.Serializable;
+import java.math.RoundingMode;
 import java.text.DateFormat;
+import java.text.DecimalFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import javax.persistence.Entity;
@@ -68,7 +71,7 @@ public class Transaction implements Serializable{
     }
 
     public double getIncoming() {
-        return incoming;
+        return setDecimal(incoming);
     }
 
     public void setIncoming(double incoming) {
@@ -76,7 +79,7 @@ public class Transaction implements Serializable{
     }
 
     public double getOutgoing() {
-        return outgoing;
+        return setDecimal(outgoing);
     }
 
     public void setOutgoing(double outgoing) {
@@ -121,5 +124,17 @@ public class Transaction implements Serializable{
 
     public void setCategory(Category category) {
         this.category = category;
+    }
+    
+    private double setDecimal(double number) {
+        try {
+            DecimalFormat deciForm = new DecimalFormat("0.00");
+            deciForm.setRoundingMode(RoundingMode.HALF_UP);
+            deciForm.parse(Double.toString(number));
+        } catch (ParseException ex) {
+            ex.printStackTrace();
+        }
+
+        return number;
     }
 }

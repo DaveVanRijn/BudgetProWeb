@@ -6,6 +6,9 @@
 package com.model;
 
 import java.io.Serializable;
+import java.math.RoundingMode;
+import java.text.DecimalFormat;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -102,7 +105,7 @@ public class User implements Serializable {
     }
 
     public double getBalance() {
-        return balance;
+        return setDecimal(balance);
     }
 
     public void setBalance(double balance) {
@@ -134,6 +137,9 @@ public class User implements Serializable {
     }
     
     public void updateTransaction(Transaction trans){
+        trans.setIncoming(setDecimal(trans.getIncoming()));
+        trans.setOutgoing(setDecimal(trans.getOutgoing()));
+        
         for(Transaction s : getTransactions()){
             if(s.getId() == trans.getId()){
                 s.setCategory(trans.getCategory());
@@ -194,5 +200,17 @@ public class User implements Serializable {
     
     public void removeMortgage(Mortgage mort){
         mortgages.remove(mort);
+    }
+    
+    private double setDecimal(double number) {
+        try {
+            DecimalFormat deciForm = new DecimalFormat("0.00");
+            deciForm.setRoundingMode(RoundingMode.HALF_UP);
+            deciForm.parse(Double.toString(number));
+        } catch (ParseException ex) {
+            ex.printStackTrace();
+        }
+
+        return number;
     }
 }

@@ -6,6 +6,9 @@
 package com.model;
 
 import java.io.Serializable;
+import java.math.RoundingMode;
+import java.text.DecimalFormat;
+import java.text.ParseException;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -61,7 +64,7 @@ public class HoldTransaction implements Serializable {
     }
 
     public double getIncoming() {
-        return incoming;
+        return setDecimal(incoming);
     }
 
     public void setIncoming(double incoming) {
@@ -69,7 +72,7 @@ public class HoldTransaction implements Serializable {
     }
 
     public double getOutgoing() {
-        return outgoing;
+        return setDecimal(outgoing);
     }
 
     public void setOutgoing(double outgoing) {
@@ -106,5 +109,17 @@ public class HoldTransaction implements Serializable {
 
     public void setUser(User user) {
         this.user = user;
+    }
+    
+    private double setDecimal(double number) {
+        try {
+            DecimalFormat deciForm = new DecimalFormat("0.00");
+            deciForm.setRoundingMode(RoundingMode.HALF_UP);
+            deciForm.parse(Double.toString(number));
+        } catch (ParseException ex) {
+            ex.printStackTrace();
+        }
+
+        return number;
     }
 }

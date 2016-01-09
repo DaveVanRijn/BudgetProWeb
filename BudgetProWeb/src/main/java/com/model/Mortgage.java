@@ -6,6 +6,9 @@
 package com.model;
 
 import java.io.Serializable;
+import java.math.RoundingMode;
+import java.text.DecimalFormat;
+import java.text.ParseException;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -76,7 +79,7 @@ public class Mortgage implements Serializable{
     }
 
     public double getRedemption() {
-        return redemption;
+        return setDecimal(redemption);
     }
 
     public void setRedemption(double redemption) {
@@ -84,7 +87,7 @@ public class Mortgage implements Serializable{
     }
 
     public double getResidualDebt() {
-        return residualDebt;
+        return setDecimal(residualDebt);
     }
 
     public void setResidualDebt(double residualDebt) {
@@ -108,7 +111,7 @@ public class Mortgage implements Serializable{
     }
 
     public double getAnnuity() {
-        return annuity;
+        return setDecimal(annuity);
     }
 
     public void setAnnuity(double annuity) {
@@ -125,7 +128,19 @@ public class Mortgage implements Serializable{
     
     public double calcInterest(){
         double monthlyInterest = (interest / 12) / 100;
-        return residualDebt * monthlyInterest;
+        return setDecimal(residualDebt * monthlyInterest);
+    }
+    
+    private double setDecimal(double number) {
+        try {
+            DecimalFormat deciForm = new DecimalFormat("0.00");
+            deciForm.setRoundingMode(RoundingMode.HALF_UP);
+            deciForm.parse(Double.toString(number));
+        } catch (ParseException ex) {
+            ex.printStackTrace();
+        }
+
+        return number;
     }
     
 }

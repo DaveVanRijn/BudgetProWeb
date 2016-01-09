@@ -9,6 +9,9 @@ import System.Main;
 import com.model.HoldTransaction;
 import com.model.Transaction;
 import com.model.User;
+import java.math.RoundingMode;
+import java.text.DecimalFormat;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 import org.hibernate.Query;
@@ -46,6 +49,9 @@ public class TransactionService {
      * @param trans the transaction
      */
     public void addTransaction(Transaction trans) {
+        trans.setIncoming(setDecimal(trans.getIncoming()));
+        trans.setOutgoing(setDecimal(trans.getOutgoing()));
+
         getCurrentSession().save(trans);
         User current = userService.getUser(Main.getAccountnumber());
         current.setBalance(current.getBalance() + trans.getIncoming() - trans.getOutgoing());
@@ -60,6 +66,24 @@ public class TransactionService {
     public List<Transaction> getTransactions() {
         hql = "from transaction";
         query = getCurrentSession().createQuery(hql);
+        return query.list();
+    }
+
+    public List<Transaction> getLessTransactions(User user) {
+        hql = "from transaction t where t.user = :user and t.repeating = :repeating order by t.datum DESC";
+        query = getCurrentSession().createQuery(hql);
+        query.setParameter("user", user);
+        query.setParameter("repeating", 0);
+        query.setMaxResults(100);
+        return query.list();
+    }
+
+    public List<Transaction> getRepeatingTransactions(User user) {
+        hql = "from transaction t where t.user = :user and t.repeating != :repeating order by t.datum DESC";
+        query = getCurrentSession().createQuery(hql);
+        query.setParameter("user", user);
+        query.setParameter("repeating", 0);
+        query.setMaxResults(50);
         return query.list();
     }
 
@@ -86,6 +110,9 @@ public class TransactionService {
      * @param transaction The transaction to be deleted
      */
     public void updateTransaction(Transaction transaction) {
+        transaction.setIncoming(setDecimal(transaction.getIncoming()));
+        transaction.setOutgoing(setDecimal(transaction.getOutgoing()));
+
         Transaction updateTransaction = getTransaction(transaction.getId());
         if (updateTransaction != null) {
             User current = userService.getUser(Main.getAccountnumber());
@@ -115,10 +142,11 @@ public class TransactionService {
         Transaction tran = getTransaction(id);
         if (tran != null) {
             User current = userService.getUser(Main.getAccountnumber());
-            current.setBalance(current.getBalance() - tran.getIncoming() + tran.getOutgoing());
-            userService.getUser(Main.getAccountnumber()).removeTransaction(tran);
+            if (tran.getRepeating() <= 0) {
+                current.setBalance(current.getBalance() - tran.getIncoming() + tran.getOutgoing());
+            }
+            current.removeTransaction(tran);
             userService.updateUser(current);
-
         }
     }
 
@@ -137,7 +165,7 @@ public class TransactionService {
             outgoing += t.getOutgoing();
             incoming += t.getIncoming();
         }
-        return new double[]{outgoing, incoming};
+        return new double[]{setDecimal(outgoing), setDecimal(incoming)};
     }
 
     /**
@@ -162,11 +190,23 @@ public class TransactionService {
         tran.setCategory(hold.getCategory());
         tran.setDatum(hold.getDatum());
         tran.setDescription(hold.getDescription());
-        tran.setIncoming(hold.getIncoming());
-        tran.setOutgoing(hold.getOutgoing());
-        tran.setRepeating(0);
+        tran.setIncoming(setDecimal(hold.getIncoming()));
+        tran.setOutgoing(setDecimal(hold.getOutgoing()));
+        tran.setRepeating(-1);
         tran.setUser(hold.getUser());
 
         return tran;
+    }
+
+    private double setDecimal(double number) {
+        try {
+            DecimalFormat deciForm = new DecimalFormat("0.00");
+            deciForm.setRoundingMode(RoundingMode.HALF_UP);
+            deciForm.parse(Double.toString(number));
+        } catch (ParseException ex) {
+            ex.printStackTrace();
+        }
+
+        return number;
     }
 }

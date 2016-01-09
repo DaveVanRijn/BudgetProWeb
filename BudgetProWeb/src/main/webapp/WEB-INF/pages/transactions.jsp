@@ -66,7 +66,7 @@
                     <div class="col-md-8">
                         <div class="widget widget-orange">
                             <div class="widget-title">
-                                <i class="fa fa-group"></i> Transacties
+                                <i class="fa fa-group"></i> Eenmalige Transacties
                             </div>
                             <div class="widget-content">
                                 <div class="table-responsive" style="height: 395px; overflow: auto;">
@@ -82,7 +82,7 @@
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            <c:forEach  var="transaction" items="${user.transactions}">
+                                            <c:forEach  var="transaction" items="${transactionList}">
                                                 <tr>
                                                     <td>${transaction.datum}</td>
                                                     <td>
@@ -97,7 +97,7 @@
                                                     </td>
                                                     <td>
                                                         <script>
-                                                            if (${transaction.repeating} > 0) {
+                                                            if (${transaction.repeating} !== 0) {
                                                                 document.write("Herhalend");
                                                             } else {
                                                                 document.write("Eenmalig");
@@ -111,6 +111,70 @@
                                                     </td>
                                                 </tr>
                                             </c:forEach>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td><a href="" class="btn btn-success">Meer laden...</a></td>
+                                        <td></td>
+                                        <td></td>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="widget widget-orange">
+                            <div class="widget-title">
+                                <i class="fa fa-group"></i> Herhalende Transacties
+                            </div>
+                            <div class="widget-content">
+                                <div class="table-responsive" style="height: 395px; overflow: auto;">
+                                    <table class="table">
+                                        <thead>
+                                            <tr>
+                                                <th>Datum</th>
+                                                <th>Binnenkomend</th>
+                                                <th>Uitgaand</th>
+                                                <th>Vast/Variabel</th>
+                                                <th>Categorie</th>
+                                                <th></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <c:forEach  var="transaction" items="${repeatingList}">
+                                                <tr>
+                                                    <td>${transaction.datum}</td>
+                                                    <td>
+                                                        <script>
+                                                            document.write(${transaction.incoming}.toFixed(2));
+                                                        </script>
+                                                    </td>
+                                                    <td style="color : #f00">
+                                                        <script>
+                                                            document.write(${transaction.outgoing}.toFixed(2));
+                                                        </script>
+                                                    </td>
+                                                    <td>
+                                                        <script>
+                                                            if (${transaction.repeating} !== 0) {
+                                                                document.write("Herhalend");
+                                                            } else {
+                                                                document.write("Eenmalig");
+                                                            }
+                                                        </script>
+                                                    </td>
+                                                    <td>${transaction.category.name}</td>
+                                                    <td>
+                                                        <a href="${pageContext.request.contextPath}/transaction/edit/${transaction.id}" class="btn btn-iconed btn-primary btn-xs"><i class="fa fa-search"></i>Details</a>
+                                                        <a onclick="return confirm('Weet je zeker dat je deze transactie wil verwijderen?')" href="${pageContext.request.contextPath}/transaction/delete/${transaction.id}" class="btn btn-danger btn-xs"><i class="fa fa-times"></i>Verwijderen</a>
+                                                    </td>
+                                                </tr>
+                                            </c:forEach>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td><a href="" class="btn btn-success">Meer laden...</a></td>
+                                        <td></td>
+                                        <td></td>
                                         </tbody>
                                     </table>
                                 </div>
@@ -122,7 +186,7 @@
                             <div class="widget-title">
                                 <i class="fa fa-group"></i>${formTitle}
                             </div>
-                            <div class="widget-content">
+                            <div class="widget-content" style="height: 965px;">
                                 <form:form method="POST" modelAttribute="transaction" action="${pageContext.request.contextPath}/transaction/add">
                                     <div class="form-group">
                                         <label control-label>ID</label>
@@ -143,11 +207,11 @@
                                     </div>
                                     <div class="form-group">
                                         <label control-label>Binnenkomend</label>
-                                        <form:input path="incoming" type="number" step="0.01" placeholder="${transaction.incoming}" class="form-control" />
+                                        <form:input path="incoming" type="number" step="0.01" min="0.00" placeholder="${transaction.incoming}" class="form-control" />
                                     </div>
                                     <div class="form-group">
                                         <label control-label>Uitgaand</label>   
-                                        <form:input path="outgoing" type="number" step="0.01" placeholder="${transaction.outgoing}" class="form-control" style="color : #f00" />
+                                        <form:input path="outgoing" type="number" step="0.01" min="0.00" placeholder="${transaction.outgoing}" class="form-control" style="color : #f00" />
                                     </div>
                                     <div class="form-group">
                                         <label control-label>Omschrijving</label>
@@ -186,6 +250,7 @@
                         </div>
                     </div>
                 </div>
+
             </div>
         </div>
         <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>

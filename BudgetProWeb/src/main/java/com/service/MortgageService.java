@@ -7,6 +7,9 @@ package com.service;
 
 import System.Main;
 import com.model.Mortgage;
+import java.math.RoundingMode;
+import java.text.DecimalFormat;
+import java.text.ParseException;
 import java.util.List;
 import org.hibernate.Query;
 import org.hibernate.Session;
@@ -55,10 +58,18 @@ public class MortgageService {
     }
     
     public void addMortgage(Mortgage mortgage){
+        mortgage.setAnnuity(setDecimal(mortgage.getAnnuity()));
+        mortgage.setRedemption(setDecimal(mortgage.getRedemption()));
+        mortgage.setResidualDebt(setDecimal(mortgage.getResidualDebt()));
+
         getCurrentSession().save(mortgage);
     }
     
     public void updateMortgage(Mortgage mort){
+        mort.setAnnuity(setDecimal(mort.getAnnuity()));
+        mort.setRedemption(setDecimal(mort.getRedemption()));
+        mort.setResidualDebt(setDecimal(mort.getResidualDebt()));
+        
         Mortgage updateMort = getMortgage(mort.getId());
         if(updateMort != null){
             updateMort.setAnnuity(mort.getAnnuity());
@@ -77,5 +88,17 @@ public class MortgageService {
         if(mort != null){
             userService.getUser(Main.getAccountnumber()).removeMortgage(mort);
         }
+    }
+    
+    private double setDecimal(double number) {
+        try {
+            DecimalFormat deciForm = new DecimalFormat("0.00");
+            deciForm.setRoundingMode(RoundingMode.HALF_UP);
+            deciForm.parse(Double.toString(number));
+        } catch (ParseException ex) {
+            ex.printStackTrace();
+        }
+
+        return number;
     }
 }

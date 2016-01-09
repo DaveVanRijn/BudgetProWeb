@@ -7,6 +7,9 @@ package com.service;
 
 import System.Main;
 import com.model.HoldTransaction;
+import java.math.RoundingMode;
+import java.text.DecimalFormat;
+import java.text.ParseException;
 import java.util.List;
 import org.hibernate.Query;
 import org.hibernate.Session;
@@ -24,39 +27,42 @@ import org.springframework.transaction.annotation.Transactional;
 @Repository
 @Transactional
 public class HoldTransactionService {
-    
+
     @Autowired
     private SessionFactory sessionFactory;
     private String hql;
     private Query query;
-    
+
     @Autowired
     private UserService userService;
-    
-    private Session getCurrentSession(){
+
+    private Session getCurrentSession() {
         return sessionFactory.getCurrentSession();
     }
-    
-    public List<HoldTransaction> getHoldTransactions(){
+
+    public List<HoldTransaction> getHoldTransactions() {
         hql = "from holdtransaction";
         query = getCurrentSession().createQuery(hql);
         return query.list();
     }
-    
-    public HoldTransaction getHoldTransaction(int id){
+
+    public HoldTransaction getHoldTransaction(int id) {
         hql = "from holdtransaction h where h.id = :id";
         query = getCurrentSession().createQuery(hql);
         query.setParameter("id", id);
         List<HoldTransaction> list = query.list();
-        if(!list.isEmpty()){
+        if (!list.isEmpty()) {
             return list.get(0);
         }
         return null;
     }
-    
-    public void updateHoldTransaction(HoldTransaction hold){
+
+    public void updateHoldTransaction(HoldTransaction hold) {
+        hold.setIncoming(setDecimal(hold.getIncoming()));
+        hold.setOutgoing(setDecimal(hold.getOutgoing()));
+        
         HoldTransaction updateHold = getHoldTransaction(hold.getId());
-        if(updateHold != null){
+        if (updateHold != null) {
             updateHold.setCategory(hold.getCategory());
             updateHold.setDatum(hold.getDatum());
             updateHold.setDescription(hold.getDescription());
@@ -66,17 +72,32 @@ public class HoldTransactionService {
             getCurrentSession().update(updateHold);
         }
     }
-    
-    public void deleteHoldTransaction(int id){
+
+    public void deleteHoldTransaction(int id) {
         HoldTransaction hold = getHoldTransaction(id);
-        if(hold != null){
+        if (hold != null) {
             userService.getUser(Main.getAccountnumber()).removeHolding(hold);
         }
     }
-    
-    public void saveAllHoldTransactions(List<HoldTransaction> holdings){
-        for(HoldTransaction h : holdings){
+
+    public void saveAllHoldTransactions(List<HoldTransaction> holdings) {
+        for (HoldTransaction h : holdings) {
+            h.setIncoming(setDecimal(h.getIncoming()));
+            h.setOutgoing(setDecimal(h.getOutgoing()));
+            
             getCurrentSession().save(h);
         }
+    }
+
+    private double setDecimal(double number) {
+        try {
+            DecimalFormat deciForm = new DecimalFormat("0.00");
+            deciForm.setRoundingMode(RoundingMode.HALF_UP);
+            deciForm.parse(Double.toString(number));
+        } catch (ParseException ex) {
+            ex.printStackTrace();
+        }
+
+        return number;
     }
 }

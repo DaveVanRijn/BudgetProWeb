@@ -15,7 +15,9 @@ import com.service.HoldTransactionService;
 import com.service.TransactionService;
 import com.service.UserService;
 import java.io.IOException;
+import java.math.RoundingMode;
 import java.text.DateFormat;
+import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -116,7 +118,7 @@ public class IndexController {
         List<HoldTransaction> holdings = new ArrayList<>();
 
         while (calculatedMonth != currentMonth) {
-            DateFormat dateForm = new SimpleDateFormat("yyyy-MM-dd kk:mm:ss");
+            DateFormat dateForm = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             for (Transaction t : currentUser.getTransactions()) {
                 if (t.getRepeating() > 0) {
                     try {
@@ -127,16 +129,18 @@ public class IndexController {
                         newDate.set(Calendar.SECOND, 0);
                         newDate.set(Calendar.HOUR_OF_DAY, 0);
                         newDate.set(Calendar.MINUTE, 0);
-                        newDate.set(Calendar.MONTH, calculatedMonth + 1);
+                        newDate.set(Calendar.MONTH, calculatedMonth);
                         Calendar checkDate = Calendar.getInstance();
                         checkDate.set(Calendar.MONTH, calculatedMonth);
                         checkDate.set(Calendar.DAY_OF_MONTH, checkDate.getActualMaximum(Calendar.DAY_OF_MONTH));
 
                         if (tranDate.getTime().before(checkDate.getTime())) {
+                            String description = t.getDescription();
+                            description += "\nHerhaling maand " + (calculatedMonth + 1);
                             switch (t.getRepeating()) {
                                 case 12:
                                     holdings.add(new HoldTransaction(t.getIncoming(),
-                                            t.getOutgoing(), t.getDescription(), dateForm.format(newDate.getTime()),
+                                            t.getOutgoing(), description, dateForm.format(newDate.getTime()),
                                             t.getCategory(), currentUser));
                                     break;
                                 case 4:
@@ -144,7 +148,7 @@ public class IndexController {
                                     for (int j = 0; j < 4; j++) {
                                         if (i == calculatedMonth) {
                                             holdings.add(new HoldTransaction(t.getIncoming(),
-                                                    t.getOutgoing(), t.getDescription(), dateForm.format(newDate.getTime()),
+                                                    t.getOutgoing(), description, dateForm.format(newDate.getTime()),
                                                     t.getCategory(), currentUser));
                                             break;
                                         }
@@ -159,7 +163,7 @@ public class IndexController {
                                     for (int j = 0; j < 2; j++) {
                                         if (i == calculatedMonth) {
                                             holdings.add(new HoldTransaction(t.getIncoming(),
-                                                    t.getOutgoing(), t.getDescription(), dateForm.format(newDate),
+                                                    t.getOutgoing(), description, dateForm.format(newDate),
                                                     t.getCategory(), currentUser));
                                             break;
                                         }
@@ -172,7 +176,7 @@ public class IndexController {
                                 case 1:
                                     if (calculatedMonth == tranDate.get(Calendar.MONTH)) {
                                         holdings.add(new HoldTransaction(t.getIncoming(),
-                                                t.getOutgoing(), t.getDescription(), dateForm.format(newDate.getTime()),
+                                                t.getOutgoing(), description, dateForm.format(newDate.getTime()),
                                                 t.getCategory(), currentUser));
                                     }
                                     break;
@@ -194,37 +198,48 @@ public class IndexController {
                 Category cat = Main.getCategory("Hypotheek", false);
                 double interest;
                 double total;
-                double premie;
                 double redemption;
+                double premie;
                 switch (m.getKind()) {
                     case "Aflossingsvrij":
                         //Interest
                         interest = m.calcInterest();
                         description += "\nRente hypotheek '" + m.getName() + "'"
-                                + "\nMaand " + calculatedMonth + 1;
+                                + "\nMaand " + (calculatedMonth + 1);
                         holdings.add(new HoldTransaction(0, interest, description,
                                 dateForm.format(cal.getTime()), cat, currentUser));
                         break;
                     case "Annuïteit":
                         //Annuity
                         description += "\nAnnuïteit hypotheek '" + m.getName() + "'"
-                                + "\nMaand " + calculatedMonth + 1;
+                                + "\nMaand " + (calculatedMonth + 1);
                         total = m.getAnnuity();
                         holdings.add(new HoldTransaction(0, total, description,
                                 dateForm.format(cal.getTime()), cat, currentUser));
                         break;
                     case "Lineair":
-                        //Redemptiom
-                        redemption = m.getRedemption();
-                        String temp = description + "\nAflossing hypotheek '" + m.getName() + "'"
-                                + "\nMaand " + calculatedMonth + 1;
-                        holdings.add(new HoldTransaction(0, redemption, temp,
-                                dateForm.format(cal.getTime()), cat, currentUser));
-                        //Interest
-                        description += "\nRente hypotheek '" + m.getName() + "'"
-                                + "\nMaand " + calculatedMonth + 1;
+//                        //Redemptiom
+//                        redemption = m.getRedemption();
+//                        String temp = description + "\nAflossing hypotheek '" + m.getName() + "'"
+//                                + "\nMaand " + calculatedMonth + 1;
+//                        holdings.add(new HoldTransaction(0, redemption, temp,
+//                                dateForm.format(cal.getTime()), cat, currentUser));
+//                        //Interest
+//                        description += "\nRente hypotheek '" + m.getName() + "'"
+//                                + "\nMaand " + calculatedMonth + 1;
+//                        interest = m.calcInterest();
+//                        holdings.add(new HoldTransaction(0, interest, description,
+//                                dateForm.format(cal.getTime()), cat, currentUser));
+                        
+                        //Redemption + Interest
                         interest = m.calcInterest();
-                        holdings.add(new HoldTransaction(0, interest, description,
+                        redemption = m.getRedemption();
+                        total = setDecimal(interest + redemption);
+                        description += "Rente + Aflossing '" + m.getName() + "'"
+                                + "\nMaand " + (calculatedMonth + 1)
+                                + "\nRente: \u20ac" + interest
+                                + "\nAflossing: \u20ac" + redemption;
+                        holdings.add(new HoldTransaction(0, total, description,
                                 dateForm.format(cal.getTime()), cat, currentUser));
                         break;
                     case "Spaar":
@@ -232,9 +247,11 @@ public class IndexController {
                         //Interest 
                         interest = m.calcInterest();
                         //Premie
-                        premie = total - interest;
+                        premie = setDecimal(total - interest);
                         description += "\nPremie hypotheek '" + m.getName() + "'"
-                                + "\nMaand " + calculatedMonth + 1;
+                                + "\nMaand " + (calculatedMonth + 1)
+                                + "\nRente: \u20ac" + interest
+                                + "\nPremie: \u20ac" + premie;
                         holdings.add(new HoldTransaction(0, total, description,
                                 dateForm.format(cal.getTime()), cat, currentUser));
                         break;
@@ -286,5 +303,17 @@ public class IndexController {
             ex.printStackTrace();
         }
         return new ModelAndView("redirect:/dashboard");
+    }
+    
+    private double setDecimal(double number) {
+        try {
+            DecimalFormat deciForm = new DecimalFormat("0.00");
+            deciForm.setRoundingMode(RoundingMode.HALF_UP);
+            deciForm.parse(Double.toString(number));
+        } catch (ParseException ex) {
+            ex.printStackTrace();
+        }
+
+        return number;
     }
 }

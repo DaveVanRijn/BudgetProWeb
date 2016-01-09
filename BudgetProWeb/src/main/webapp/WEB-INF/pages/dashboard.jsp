@@ -113,14 +113,14 @@
                                                             document.write(${transaction.incoming}.toFixed(2));
                                                         </script>
                                                     </td>
-                                                    <td>
+                                                    <td style="color: #f00">
                                                         <script>
                                                             document.write(${transaction.outgoing}.toFixed(2));
                                                         </script>
                                                     </td>
                                                     <td>
                                                         <script>
-                                                            if (${transaction.repeating} > 0) {
+                                                            if (${transaction.repeating} !== 0) {
                                                                 document.write("Herhalend");
                                                             } else {
                                                                 document.write("Eenmalig");

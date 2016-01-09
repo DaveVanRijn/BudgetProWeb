@@ -27,51 +27,52 @@ import org.springframework.transaction.annotation.Transactional;
 @Repository
 @Transactional
 public class MortgageService {
-    
+
     @Autowired
     private SessionFactory sessionFactory;
     private String hql;
     private Query query;
-    
+
     @Autowired
     private UserService userService;
-    
-    private Session getCurrentSession(){
+
+    private Session getCurrentSession() {
         return sessionFactory.getCurrentSession();
     }
-    
-    public List<Mortgage> getMortgages(){
+
+    public List<Mortgage> getMortgages() {
         hql = "from mortgage";
         query = getCurrentSession().createQuery(hql);
         return query.list();
     }
-    
-    public Mortgage getMortgage(int id){
+
+    public Mortgage getMortgage(int id) {
         hql = "from mortgage m where m.id = :id";
         query = getCurrentSession().createQuery(hql);
         query.setParameter("id", id);
         List<Mortgage> list = query.list();
-        if(!list.isEmpty()){
+        if (!list.isEmpty()) {
             return list.get(0);
         }
         return null;
     }
-    
-    public void addMortgage(Mortgage mortgage){
+
+    public void addMortgage(Mortgage mortgage) {
         mortgage.setAnnuity(setDecimal(mortgage.getAnnuity()));
         mortgage.setRedemption(setDecimal(mortgage.getRedemption()));
         mortgage.setResidualDebt(setDecimal(mortgage.getResidualDebt()));
 
         getCurrentSession().save(mortgage);
     }
-    
-    public void updateMortgage(Mortgage mort){
+
+    public void updateMortgage(Mortgage mort) {
         mort.setAnnuity(setDecimal(mort.getAnnuity()));
         mort.setRedemption(setDecimal(mort.getRedemption()));
         mort.setResidualDebt(setDecimal(mort.getResidualDebt()));
-        
+
         Mortgage updateMort = getMortgage(mort.getId());
-        if(updateMort != null){
+        if (updateMort != null) {
+            updateMort.setName(mort.getName());
             updateMort.setAnnuity(mort.getAnnuity());
             updateMort.setDescription(mort.getDescription());
             updateMort.setInterest(mort.getInterest());
@@ -82,14 +83,14 @@ public class MortgageService {
             getCurrentSession().update(updateMort);
         }
     }
-    
-    public void deleteMortgage(int id){
+
+    public void deleteMortgage(int id) {
         Mortgage mort = getMortgage(id);
-        if(mort != null){
+        if (mort != null) {
             userService.getUser(Main.getAccountnumber()).removeMortgage(mort);
         }
     }
-    
+
     private double setDecimal(double number) {
         try {
             DecimalFormat deciForm = new DecimalFormat("0.00");

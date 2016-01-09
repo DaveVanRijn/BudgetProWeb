@@ -133,7 +133,7 @@ public class TransactionController {
         transList.addObject("incomingCat", incoming);
         transList.addObject("outgoingCat", outgoing);
         transList.addObject("formTitle", "Nieuwe transactie");
-        transList.addObject("transaction", new Transaction());
+        transList.addObject("transaction", transaction);
 
         return transList;
     }

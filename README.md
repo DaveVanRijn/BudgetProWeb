@@ -16,3 +16,5 @@ Future features:<br>
 -Sorting on all tables<br>
 
 The application is currently being developed. This means it hasn't been fully tested yet so bugs and crashes may occur.
+
+The application requires a MySQL Database named budgetproweb!

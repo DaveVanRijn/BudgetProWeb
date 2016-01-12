@@ -3,7 +3,7 @@ Web version of BudgetPro
 
 This web application of BudgetPro is currently being developed. All features are in Beta, nwe features are added every now and then. The application is run on a local Tomcat server.
 
-Current Main features:
+Current Main features:<\br>
 -Add categories to categorise transactions.
 -Add incoming and outgoing transactions.
 -Automatically repeat repeating transactions after specified intervals.

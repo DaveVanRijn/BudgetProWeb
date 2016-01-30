@@ -12,6 +12,8 @@ import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -50,6 +52,14 @@ public class Transaction implements Serializable{
         DateFormat dateForm = new SimpleDateFormat("yyyy-MM-dd");
         Date date = new Date();
         this.datum = dateForm.format(date);
+    }
+    
+    public Transaction(int id){
+        super();
+        this.id = id;
+        DateFormat dateForm = new SimpleDateFormat("yyyy-MM-dd");
+        Date date = new Date();
+        this.datum = dateForm.format(date); 
     }
 
     public Transaction(double incoming, double outgoing, String description, 
@@ -100,6 +110,17 @@ public class Transaction implements Serializable{
 
     public void setDatum(String datum) {
         this.datum = datum;
+    }
+    
+    public String getDateOnly(){
+        DateFormat toDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        DateFormat toString = new SimpleDateFormat("yyyy-MM-dd");
+        try {
+            return toString.format(toDate.parse(datum));
+        } catch (ParseException ex) {
+            ex.printStackTrace();
+        }
+        return null;
     }
 
     public int getRepeating() {

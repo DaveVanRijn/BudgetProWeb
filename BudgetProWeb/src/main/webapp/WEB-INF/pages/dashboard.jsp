@@ -56,9 +56,21 @@
                         </ul>
                     </div>
                 </div>
-                <h1>Dashboard</h1>
-                </br>
-                V0.1.1 Beta
+                <div class="col-md-5">
+                    <h1>Dashboard</h1>
+                    </br>
+                    V0.2.0 Beta
+                </div>
+                <div class="col-md-2">
+                    <h1>€
+                        <script>
+                            document.write(${user.balance}.toFixed(2))
+                        </script>
+                    </h1>
+                </div>
+                <div class="col-md-3">
+                    <h4>Laatste transactie: ${lastDate}</h4>
+                </div>
             </div>
             <div class="side">
                 <div class="sidebar-wrapper">
@@ -83,6 +95,11 @@
                                 <i class="fa fa-money"></i>
                             </a>
                         </li>
+                        <li>
+                            <a href="${pageContext.request.contextPath}/statistics/page" data-toggle="tooltip" data-placement="right" title="Statistieken" data-original-title="Statistieken">
+                                <i class="fa fa-tachometer"></i>
+                            </a>
+                        </li>
                     </ul>
                 </div>
             </div>
@@ -91,7 +108,7 @@
                     <div class="col-md-7">
                         <div class="widget widget-orange">
                             <div class="widget-title">
-                                <i class="fa fa-group"></i>Recente Transacties
+                                <i class="fa fa-table"></i>Recente Transacties
                             </div>
                             <div class="widget-content">
                                 <div class="table-responsive" style="height: 225px;">
@@ -138,7 +155,7 @@
                     <div class="col-md-5">
                         <div class="widget widget-orange">
                             <div class="widget-title">
-                                <i class="fa fa-group"></i>Statistieken
+                                <i class="fa fa-pie-chart"></i>Statistieken
                             </div>
                             <div class="widget-content">
                                 <div id="piechart_3d" style="height: 225px;"</div>
@@ -147,11 +164,12 @@
                     </div>
                 </div>
             </div>
-            <div class="row">
-                <div>
+            <div class="col-md-6 col-md-offset-3">
+                <div>   
                     <a href="${pageContext.request.contextPath}/transaction/list" class="btn btn-action btn-lg btn-info"><i class="fa fa-euro"></i> Transacties</a>
-                    <a href="${pageContext.request.contextPath}/categorie/list" class="btn btn-action btn-lg btn-info"><i class="fa fa fa-list"></i> Categorieën</a>
+                    <a href="${pageContext.request.contextPath}/category/list" class="btn btn-action btn-lg btn-info"><i class="fa fa fa-list"></i> Categorieën</a>
                     <a href="${pageContext.request.contextPath}/mortgage/list" class="btn btn-action btn-lg btn-info"><i class="fa fa-money"></i> Hypotheken</a>
+                    <a href="${pageContext.request.contextPath}/statistics/page" class="btn btn-action btn-lg btn-info"><i class="fa fa-tachometer"></i> Statistieken</a>
                 </div>
             </div>
             <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>

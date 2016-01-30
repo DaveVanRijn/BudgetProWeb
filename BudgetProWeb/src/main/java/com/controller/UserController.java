@@ -7,6 +7,7 @@ package com.controller;
 
 import System.Main;
 import com.model.User;
+import com.service.TransactionService;
 import com.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -26,12 +27,15 @@ public class UserController {
     
     @Autowired
     UserService userService;
+    @Autowired
+    TransactionService transactionService;
     
     @RequestMapping(value = "/", method = RequestMethod.GET)
     public ModelAndView userPage(){
         ModelAndView view = new ModelAndView("user");
-        
-        view.addObject("user", userService.getUser(Main.getAccountnumber()));
+        User user = userService.getUser(Main.getAccountnumber());
+        view.addObject("lastDate", transactionService.getLastDate(user));
+        view.addObject("user", user);
         return view;
     }
     
@@ -41,7 +45,6 @@ public class UserController {
         
         userService.updateUser(user);
         Main.setCurrentUser(userService.getUser(user.getAccountnumber()));
-        view.addObject("user", userService.getUser(Main.getAccountnumber()));
         return view;
     }
     

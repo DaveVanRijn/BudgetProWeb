@@ -9,6 +9,16 @@
 <!DOCTYPE html>
 <html>
     <head meta charset="utf-8">
+        <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+        <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js"></script>
+        <script src='${pageContext.request.contextPath}/static/assets/js/Transactions.js'></script>
+        <script src='${pageContext.request.contextPath}/static/js/ad67372f4b8b70896e8a596720082ac6.js'></script>
+        <script src='${pageContext.request.contextPath}/static/js/d7dfc13379a397356e42ab8bd98901a0.js'></script>
+        <script type="text/javascript">
+            $(document).ready(function () {
+                document.getElementById("noRep").checked = true;
+            });
+        </script>
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <link rel='stylesheet' href='${pageContext.request.contextPath}/static/css/style.css'>
@@ -33,7 +43,19 @@
                         </ul>
                     </div>
                 </div>
-                <h1>Transacties</h1>
+                <div class="col-md-5">
+                    <h1>Transacties</h1>
+                </div>
+                <div class="col-md-2">
+                    <h1 id="balance">€
+                        <script>
+                            document.write(${user.balance}.toFixed(2))
+                        </script>
+                    </h1>
+                </div>
+                <div class="col-md-3">
+                    <h4 id="lastDate">Laatste transactie: ${lastDate}</h4>
+                </div>
             </div>
             <div class="side">
                 <div class="sidebar-wrapper">
@@ -58,6 +80,11 @@
                                 <i class="fa fa-money"></i>
                             </a>
                         </li>
+                        <li>
+                            <a href="${pageContext.request.contextPath}/statistics/page" data-toggle="tooltip" data-placement="right" title="Statistieken" data-original-title="Statistieken">
+                                <i class="fa fa-tachometer"></i>
+                            </a>
+                        </li>
                     </ul>
                 </div>
             </div>
@@ -70,21 +97,20 @@
                             </div>
                             <div class="widget-content">
                                 <div class="table-responsive" style="height: 395px; overflow: auto;">
-                                    <table class="table">
+                                    <table id="tranTable" class="table">
                                         <thead>
                                             <tr>
                                                 <th>Datum</th>
                                                 <th>Binnenkomend</th>
                                                 <th>Uitgaand</th>
-                                                <th>Vast/Variabel</th>
                                                 <th>Categorie</th>
                                                 <th></th>
                                             </tr>
                                         </thead>
                                         <tbody>
                                             <c:forEach  var="transaction" items="${transactionList}">
-                                                <tr>
-                                                    <td>${transaction.datum}</td>
+                                                <tr id="row${transaction.id}" data-val="${transaction.datum}">
+                                                    <td id="date${transaction.id}">${transaction.datum}</td>
                                                     <td>
                                                         <script>
                                                             document.write(${transaction.incoming}.toFixed(2));
@@ -95,30 +121,18 @@
                                                             document.write(${transaction.outgoing}.toFixed(2));
                                                         </script>
                                                     </td>
-                                                    <td>
-                                                        <script>
-                                                            if (${transaction.repeating} !== 0) {
-                                                                document.write("Herhalend");
-                                                            } else {
-                                                                document.write("Eenmalig");
-                                                            }
-                                                        </script>
-                                                    </td>
                                                     <td>${transaction.category.name}</td>
                                                     <td>
-                                                        <a href="${pageContext.request.contextPath}/transaction/edit/${transaction.id}" class="btn btn-iconed btn-primary btn-xs"><i class="fa fa-search"></i>Details</a>
-                                                        <a onclick="return confirm('Weet je zeker dat je deze transactie wil verwijderen?')" href="${pageContext.request.contextPath}/transaction/delete/${transaction.id}" class="btn btn-danger btn-xs"><i class="fa fa-times"></i>Verwijderen</a>
+                                                        <button onclick="toForm(${transaction.id})" class="btn btn-iconed btn-primary btn-xs"><i class="fa fa-search"></i>Details</button>
+                                                        <button onclick="deleteT(${transaction.id})" class="btn btn-danger btn-xs"><i class="fa fa-times"></i>Verwijderen</button>
                                                     </td>
                                                 </tr>
                                             </c:forEach>
-                                        <td></td>
-                                        <td></td>
-                                        <td></td>
-                                        <td><a href="" class="btn btn-success">Meer laden...</a></td>
-                                        <td></td>
-                                        <td></td>
                                         </tbody>
                                     </table>
+                                    <div class="col-md-offset-5">
+                                        <a id="more" href="" class="btn btn-success">Meer laden...</a>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -128,21 +142,20 @@
                             </div>
                             <div class="widget-content">
                                 <div class="table-responsive" style="height: 395px; overflow: auto;">
-                                    <table class="table">
+                                    <table id="tranRepTable" class="table">
                                         <thead>
                                             <tr>
                                                 <th>Datum</th>
                                                 <th>Binnenkomend</th>
                                                 <th>Uitgaand</th>
-                                                <th>Vast/Variabel</th>
                                                 <th>Categorie</th>
                                                 <th></th>
                                             </tr>
                                         </thead>
                                         <tbody>
                                             <c:forEach  var="transaction" items="${repeatingList}">
-                                                <tr>
-                                                    <td>${transaction.datum}</td>
+                                                <tr id="row${transaction.id}" data-val="${transaction.datum}">
+                                                    <td id="date${transaction.id}">${transaction.datum}</td>
                                                     <td>
                                                         <script>
                                                             document.write(${transaction.incoming}.toFixed(2));
@@ -153,30 +166,18 @@
                                                             document.write(${transaction.outgoing}.toFixed(2));
                                                         </script>
                                                     </td>
-                                                    <td>
-                                                        <script>
-                                                            if (${transaction.repeating} !== 0) {
-                                                                document.write("Herhalend");
-                                                            } else {
-                                                                document.write("Eenmalig");
-                                                            }
-                                                        </script>
-                                                    </td>
                                                     <td>${transaction.category.name}</td>
                                                     <td>
-                                                        <a href="${pageContext.request.contextPath}/transaction/edit/${transaction.id}" class="btn btn-iconed btn-primary btn-xs"><i class="fa fa-search"></i>Details</a>
-                                                        <a onclick="return confirm('Weet je zeker dat je deze transactie wil verwijderen?')" href="${pageContext.request.contextPath}/transaction/delete/${transaction.id}" class="btn btn-danger btn-xs"><i class="fa fa-times"></i>Verwijderen</a>
+                                                        <button onclick="toForm(${transaction.id})" class="btn btn-iconed btn-primary btn-xs"><i class="fa fa-search"></i>Details</button>
+                                                        <button onclick="deleteT(${transaction.id})" class="btn btn-danger btn-xs"><i class="fa fa-times"></i>Verwijderen</button>
                                                     </td>
                                                 </tr>
                                             </c:forEach>
-                                        <td></td>
-                                        <td></td>
-                                        <td></td>
-                                        <td><a href="" class="btn btn-success">Meer laden...</a></td>
-                                        <td></td>
-                                        <td></td>
                                         </tbody>
                                     </table>
+                                    <div class="col-md-offset-5">
+                                        <a id="moreRep" href="" class="btn btn-success">Meer laden...</a>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -186,66 +187,66 @@
                             <div class="widget-title">
                                 <i class="fa fa-group"></i>${formTitle}
                             </div>
-                            <div class="widget-content" style="height: 965px;">
-                                <form:form method="POST" modelAttribute="transaction" action="${pageContext.request.contextPath}/transaction/add">
+                            <div id="form" class="widget-content">
+                                <form method="POST" action="JavaScript:addT()">
                                     <div class="form-group">
-                                        <label control-label>ID</label>
-                                        <form:input path="id" type="text" placeholder="${transaction.id}" class="form-control" readonly="true"/>
+                                        <label contro-label>ID</label>
+                                        <input id="id" type="text" class="form-control" readonly="true" value="0">
                                     </div>
                                     <div class="form-group">
                                         <label control-label>Categorie</label>
-                                        <form:select path="category" class="form-control">
-                                            <optgroup label="Ingaand"/>
-                                            <c:forEach items="${incomingCat}" var="cat">
-                                                <form:option label="${cat.name}" value="${cat.id}"/>
-                                            </c:forEach>
-                                            <optgroup label="Uitgaand"/>
+                                        <select id="category" class="form-control">
+                                            <optgroup label="Uitgaand"></optgroup>
                                             <c:forEach items="${outgoingCat}" var="cat">
-                                                <form:option label="${cat.name}" value="${cat.id}"/>
+                                                <option label="${cat.name}" value="${cat.id}"></option>
                                             </c:forEach>
-                                        </form:select>
+                                            <optgroup label="Ingaand"></optgroup>
+                                            <c:forEach items="${incomingCat}" var="cat">
+                                                <option label="${cat.name}" value="${cat.id}"></option>
+                                            </c:forEach>
+                                        </select>
                                     </div>
                                     <div class="form-group">
-                                        <label control-label>Binnenkomend</label>
-                                        <form:input path="incoming" type="number" step="0.01" min="0.00" placeholder="${transaction.incoming}" class="form-control" />
+                                        <label control-label>Ingaand</label>
+                                        <input id="incoming" type="number" step="0.01" min="0.00" class="form-control" value="0.00">
                                     </div>
                                     <div class="form-group">
-                                        <label control-label>Uitgaand</label>   
-                                        <form:input path="outgoing" type="number" step="0.01" min="0.00" placeholder="${transaction.outgoing}" class="form-control" style="color : #f00" />
+                                        <label control-label>Uitgaand</label>
+                                        <input id="outgoing" type="number" step="0.01" min="0.00" class="form-control" style="color: #f00" value="0.00">
                                     </div>
                                     <div class="form-group">
                                         <label control-label>Omschrijving</label>
-                                        <form:textarea path="description" class="form-control" placeholder="${transaction.description}"/>
+                                        <textarea id="description" class="form-control" placeholder="Omschrijving"></textarea>
                                     </div>
                                     <div class="form-group">
                                         <label control-label>Herhaling</label>
                                         <div class="radio">
-                                            <form:radiobutton path="repeating" name="herhaling" value="0" label=" Eenmalig" />
+                                            <input id="noRep" type="radio" name="herhaling" value="0"> Eenmalig
                                         </div>
                                         <div class="radio">
-                                            <form:radiobutton path="repeating" name="herhaling" value="12" label=" Elke maand" />
+                                            <input id="rep12" type="radio" name="herhaling" value="12"> Elke maand
                                         </div>
                                         <div class="radio">
-                                            <form:radiobutton path="repeating" name="herhaling" value="4" label=" Elk kwartaal" />
+                                            <input id="rep4" type="radio" name="herhaling" value="4"> Elk kwartaal
                                         </div>
                                         <div class="radio">
-                                            <form:radiobutton path="repeating" name="herhaling" value="2" label=" Elk half jaar" />
+                                            <input id="rep2" type="radio" name="herhaling" value="2"> Elk half jaar
                                         </div>
                                         <div class="radio">
-                                            <form:radiobutton path="repeating" name="herhaling" value="1" label=" Elk jaar" />
+                                            <input id="rep1" type="radio" name="herhaling" value="1"> Elk jaar
                                         </div>
                                     </div>
                                     <div class="form-group">
                                         <label control-label>Datum</label>
-                                        <form:input path="datum" type="date" value="${transaction.datum}" class="form-control"/>
+                                        <input id="date" type="date" class="form-control" value="${date}">
                                     </div>
                                     <div class="form-group">
-                                        <form:button type="submit" class="btn btn-primary"><i class="fa fa-save"></i>Opslaan</form:button>
-                                        </div>
-                                        <div class="form-group">
-                                            <a href="${pageContext.request.contextPath}/transaction/list" class="btn  btn-danger"><i class="fa fa-times"></i>Annuleren</a>
+                                        <button type="submit" class="btn btn-primary"><i class="fa fa-save"></i>Opslaan</button>
                                     </div>
-                                </form:form>
+                                    <div class="form-group">
+                                        <a onclick="resetForm()" class="btn btn-danger"><i class="fa fa-times"></i>Annuleren</a>
+                                    </div>
+                                </form>
                             </div>
                         </div>
                     </div>
@@ -253,9 +254,5 @@
 
             </div>
         </div>
-        <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
-        <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js"></script>
-        <script src='${pageContext.request.contextPath}/static/js/ad67372f4b8b70896e8a596720082ac6.js'></script>
-        <script src='${pageContext.request.contextPath}/static/js/d7dfc13379a397356e42ab8bd98901a0.js'></script>
     </body>
 </html>

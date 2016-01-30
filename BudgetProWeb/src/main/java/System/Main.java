@@ -7,6 +7,12 @@ package System;
 
 import com.model.Category;
 import com.model.User;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -15,6 +21,7 @@ import com.model.User;
 public class Main {
     
     private static User currentUser;
+    private static Date lastDate;
     
     public static User getCurrentUser(){
         return currentUser;
@@ -39,6 +46,20 @@ public class Main {
             }
         }
         return null;
+    }
+    
+    public static void setLastDate(String date){
+        try {
+            DateFormat form = new SimpleDateFormat("dd-MM-yyyy");
+            lastDate = form.parse(date);
+        } catch (ParseException ex) {
+            ex.printStackTrace();
+        }
+    }
+    
+    public String getLastDate(){
+        DateFormat form = new SimpleDateFormat("dd-MM-yyyy");
+        return form.format(lastDate);
     }
     
 }

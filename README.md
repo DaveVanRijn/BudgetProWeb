@@ -9,9 +9,9 @@ Current Main features:<br>
 -Automatically repeat repeating transactions after specified intervals.<br>
 -Add mortgages (which are also automatically processed every month).<br>
 -View current balance.<br>
+-View statistics (NEW!)<br>
 
 Future features:<br>
--View statistics on incoming and outgoing categories (including transaction details per category)<br>
 -Save statistics as PDF and/or print the statistics.<br>
 -Sorting on all tables<br>
 

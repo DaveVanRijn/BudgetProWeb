@@ -7,7 +7,9 @@ package com.controller;
 
 import System.Main;
 import com.model.Category;
+import com.model.User;
 import com.service.CategoryService;
+import com.service.TransactionService;
 import com.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -32,12 +34,15 @@ public class CategoryController {
     private CategoryService categoryService;
     @Autowired
     private UserService userService;
+    @Autowired
+    private TransactionService transactionService;
 
     @RequestMapping(value = "/list")
     public ModelAndView categoryList() {
         ModelAndView view = new ModelAndView("categories");
-
-        view.addObject("user", userService.getUser(Main.getAccountnumber()));
+        User user = userService.getUser(Main.getAccountnumber());
+        view.addObject("lastDate", transactionService.getLastDate(user));
+        view.addObject("user", user);
         view.addObject("formTitle", newCategory);
         view.addObject("category", new Category());
 
@@ -46,25 +51,28 @@ public class CategoryController {
 
     @RequestMapping(value = "/add", method = RequestMethod.POST)
     public ModelAndView addCategory(@ModelAttribute("category") Category category) {
-        category.setUser(userService.getUser(Main.getAccountnumber()));
+        User user = userService.getUser(Main.getAccountnumber());
+        category.setUser(user);
 
         if (categoryService.getCategory(category.getId()) == null) {
-            if (categoryService.getCategory(category.getName(), category.isIncoming()) == null) {
+            if (categoryService.getCategory(category.getName(), category.isIncoming(), user) == null) {
                 categoryService.addCategory(category);
             } else {
                 ModelAndView view = new ModelAndView("categories");
-                view.addObject("user", userService.getUser(Main.getAccountnumber()));
+                view.addObject("lastDate", transactionService.getLastDate(user));
+                view.addObject("user", user);
                 view.addObject("formTitle", newCategory);
                 view.addObject("category", category);
                 view.addObject("message", "Er bestaat al een categorie met deze naam!");
                 return view;
             }
         } else {
-            if (categoryService.getCategory(category.getName(), category.isIncoming()) == null) {
+            if (categoryService.getCategory(category.getName(), category.isIncoming(), user) == null) {
                 categoryService.updateCategory(category);
             } else {
                 ModelAndView view = new ModelAndView("categories");
-                view.addObject("user", userService.getUser(Main.getAccountnumber()));
+                view.addObject("lastDate", transactionService.getLastDate(user));
+                view.addObject("user", user);
                 view.addObject("formTitle", editCategory);
                 view.addObject("category", category);
                 view.addObject("message", "Er bestaat al een categorie met deze naam!");
@@ -79,9 +87,10 @@ public class CategoryController {
     public ModelAndView editCategory(@PathVariable Integer id) {
 
         ModelAndView view = new ModelAndView("categories");
-        
+        User user = userService.getUser(Main.getAccountnumber());
         Category category = categoryService.getCategory(id);
-        view.addObject("user", userService.getUser(Main.getAccountnumber()));
+        view.addObject("lastDate", transactionService.getLastDate(user));
+        view.addObject("user", user);
         view.addObject("formTitle", editCategory);
         view.addObject("category", category);
 

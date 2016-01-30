@@ -7,7 +7,9 @@ package com.controller;
 
 import System.Main;
 import com.model.Mortgage;
+import com.model.User;
 import com.service.MortgageService;
+import com.service.TransactionService;
 import com.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -31,12 +33,15 @@ public class MortgageController {
     private MortgageService mortgageService;
     @Autowired
     private UserService userService;
+    @Autowired
+    private TransactionService transactionService;
     
     @RequestMapping(value = "/list")
     public ModelAndView listMortgages(){
         ModelAndView view = new ModelAndView("mortgages");
-        
-        view.addObject("user", userService.getUser(Main.getAccountnumber()));
+        User user = userService.getUser(Main.getAccountnumber());
+        view.addObject("lastDate", transactionService.getLastDate(user));
+        view.addObject("user", user);
         view.addObject("formTitle", newMortgage);
         view.addObject("mortgage", new Mortgage());
         
@@ -58,9 +63,10 @@ public class MortgageController {
     
     @RequestMapping(value = "/edit/{id}")
     public ModelAndView editMortgage(@PathVariable Integer id){
-        
+        User user = userService.getUser(Main.getAccountnumber());
         ModelAndView view = new ModelAndView("mortgages");
-        view.addObject("user", userService.getUser(Main.getAccountnumber()));
+        view.addObject("lastDate", transactionService.getLastDate(user));
+        view.addObject("user", user);
         view.addObject("formTitle", editMortgage);
         view.addObject("mortgage", mortgageService.getMortgage(id));
         

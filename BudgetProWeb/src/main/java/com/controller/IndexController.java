@@ -56,15 +56,17 @@ public class IndexController {
     @RequestMapping(value = "/dashboard")
     public ModelAndView homescreen() {
 
-        double[] stats = transactionService.getTotalOutAndIn(userService.getUser(Main.getAccountnumber()));
+        User user = userService.getUser(Main.getAccountnumber());
+        double[] stats = transactionService.getTotalOutAndIn(user);
         double outgoing = stats[0];
         double incoming = stats[1];
 
         ModelAndView dashboardView = new ModelAndView("dashboard");
+        dashboardView.addObject("lastDate", transactionService.getLastDate(user));
         dashboardView.addObject("outgoing", outgoing);
         dashboardView.addObject("incoming", incoming);
-        dashboardView.addObject("transactionList", transactionService.getRecentTransactions(userService.getUser(Main.getAccountnumber())));
-        dashboardView.addObject("user", userService.getUser(Main.getAccountnumber()));
+        dashboardView.addObject("transactionList", transactionService.getRecentTransactions(user));
+        dashboardView.addObject("user", user);
 
         return dashboardView;
     }
@@ -114,15 +116,18 @@ public class IndexController {
 
         User currentUser = userService.getUser(Main.getAccountnumber());
         int currentMonth = Calendar.getInstance().get(Calendar.MONTH);
-        int calculatedMonth = currentUser.getLastMonthCalculated();
+        int lastCalculatedMonth = currentUser.getLastMonthCalculated();
         List<HoldTransaction> holdings = new ArrayList<>();
 
-        while (calculatedMonth != currentMonth) {
+        while (lastCalculatedMonth != currentMonth) {
+            int calculatedMonth = lastCalculatedMonth + 1;
+            if (calculatedMonth == 12) {
+                calculatedMonth = 0;
+            }
             DateFormat dateForm = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             for (Transaction t : currentUser.getTransactions()) {
                 if (t.getRepeating() > 0) {
                     try {
-                        DateFormat form = new SimpleDateFormat("yyyy-MM-dd");
                         Calendar tranDate = Calendar.getInstance();
                         tranDate.setTime(dateForm.parse(t.getDatum()));
                         Calendar newDate = (Calendar) tranDate.clone();
@@ -205,14 +210,14 @@ public class IndexController {
                         //Interest
                         interest = m.calcInterest();
                         description += "\nRente hypotheek '" + m.getName() + "'"
-                                + "\nMaand " + (calculatedMonth + 1);
+                                + "\nMaand " + (calculatedMonth);
                         holdings.add(new HoldTransaction(0, interest, description,
                                 dateForm.format(cal.getTime()), cat, currentUser));
                         break;
                     case "Annuïteit":
                         //Annuity
                         description += "\nAnnuïteit hypotheek '" + m.getName() + "'"
-                                + "\nMaand " + (calculatedMonth + 1);
+                                + "\nMaand " + (calculatedMonth);
                         total = m.getAnnuity();
                         holdings.add(new HoldTransaction(0, total, description,
                                 dateForm.format(cal.getTime()), cat, currentUser));
@@ -230,13 +235,13 @@ public class IndexController {
 //                        interest = m.calcInterest();
 //                        holdings.add(new HoldTransaction(0, interest, description,
 //                                dateForm.format(cal.getTime()), cat, currentUser));
-                        
+
                         //Redemption + Interest
                         interest = m.calcInterest();
                         redemption = m.getRedemption();
                         total = setDecimal(interest + redemption);
                         description += "Rente + Aflossing '" + m.getName() + "'"
-                                + "\nMaand " + (calculatedMonth + 1)
+                                + "\nMaand " + (calculatedMonth)
                                 + "\nRente: \u20ac" + interest
                                 + "\nAflossing: \u20ac" + redemption;
                         holdings.add(new HoldTransaction(0, total, description,
@@ -249,7 +254,7 @@ public class IndexController {
                         //Premie
                         premie = setDecimal(total - interest);
                         description += "\nPremie hypotheek '" + m.getName() + "'"
-                                + "\nMaand " + (calculatedMonth + 1)
+                                + "\nMaand " + (calculatedMonth)
                                 + "\nRente: \u20ac" + interest
                                 + "\nPremie: \u20ac" + premie;
                         holdings.add(new HoldTransaction(0, total, description,
@@ -258,11 +263,11 @@ public class IndexController {
                 }
             }
 
-            calculatedMonth++;
-            if (calculatedMonth == 12) {
-                calculatedMonth = 0;
+            lastCalculatedMonth++;
+            if (lastCalculatedMonth == 12) {
+                lastCalculatedMonth = 0;
             }
-            currentUser.setLastMonthCalculated(calculatedMonth);
+            currentUser.setLastMonthCalculated(lastCalculatedMonth);
             userService.updateUser(currentUser);
         }
 
@@ -304,7 +309,7 @@ public class IndexController {
         }
         return new ModelAndView("redirect:/dashboard");
     }
-    
+
     private double setDecimal(double number) {
         try {
             DecimalFormat deciForm = new DecimalFormat("0.00");

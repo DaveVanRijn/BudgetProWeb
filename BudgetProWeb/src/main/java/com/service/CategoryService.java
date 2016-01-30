@@ -7,7 +7,11 @@ package com.service;
 
 import System.Main;
 import com.model.Category;
+import com.model.Transaction;
+import com.model.User;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -54,11 +58,12 @@ public class CategoryService {
         return null;
     }
     
-    public Category getCategory(String name, boolean incoming){
-        hql = "from category c where c.name = :name and c.incoming = :incoming";
+    public Category getCategory(String name, boolean incoming, User user){
+        hql = "from category c where c.name = :name and c.incoming = :incoming and c.user = :user";
         query = getCurrentSession().createQuery(hql);
         query.setParameter("name", name);
         query.setParameter("incoming", incoming);
+        query.setParameter("user", user);
         
         List<Category> list = query.list();
         if(!list.isEmpty()){
@@ -88,5 +93,39 @@ public class CategoryService {
         if (cat != null) {
             userService.getUser(Main.getAccountnumber()).removeCategory(cat);
         }
+    }
+
+    public Map<Category, Double> getCategoryStats() {
+        Map<Category, Double> catMap = new HashMap<>();
+        User current = userService.getUser(Main.getAccountnumber());
+        List<Category> categories = current.getCategories();
+        for(Category c : categories){
+            catMap.put(c, 0.0);
+        }
+        
+        List<Transaction> transactions = current.getTransactions();
+        for (Transaction t : transactions) {
+            Category c = t.getCategory();
+            if(catMap.containsKey(c)){
+                double curValue = catMap.get(c);
+                double newValue;
+                if(c.isIncoming()){
+                    newValue = curValue + t.getIncoming();
+                } else {
+                    newValue = curValue + t.getOutgoing();
+                }
+                catMap.put(c, newValue);
+            } else {
+                double value;
+                if(c.isIncoming()){
+                    value = t.getIncoming();
+                } else {
+                    value = t.getOutgoing();
+                }
+                catMap.put(c, value);
+            }
+        }
+        
+        return catMap;
     }
 }

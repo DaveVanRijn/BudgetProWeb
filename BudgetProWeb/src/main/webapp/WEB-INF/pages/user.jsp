@@ -33,7 +33,19 @@
                         </ul>
                     </div>
                 </div>
-                <h1>Gebruiker</h1>
+                <div class="col-md-5">
+                    <h1>Gebruiker</h1>
+                </div>
+                <div class="col-md-2">
+                    <h1>€
+                        <script>
+                            document.write(${user.balance}.toFixed(2))
+                        </script>
+                    </h1>
+                </div>
+                <div class="col-md-3">
+                    <h4>Laatste transactie: ${lastDate}</h4>
+                </div>
             </div>
             <div class="side">
                 <div class="sidebar-wrapper">
@@ -56,6 +68,11 @@
                         <li>
                             <a href="${pageContext.request.contextPath}/mortgage/list" data-toggle="tooltip" data-placement="right" title="Hypotheken" data-original-title="Hypotheken">
                                 <i class="fa fa-money"></i>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="${pageContext.request.contextPath}/statistics/page" data-toggle="tooltip" data-placement="right" title="Statistieken" data-original-title="Statistieken">
+                                <i class="fa fa-tachometer"></i>
                             </a>
                         </li>
                     </ul>

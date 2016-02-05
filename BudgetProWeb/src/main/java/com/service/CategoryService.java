@@ -12,9 +12,11 @@ import com.model.User;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.criterion.Projections;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
@@ -127,5 +129,11 @@ public class CategoryService {
         }
         
         return catMap;
+    }
+    
+    public int getNextId() {
+        Criteria crit = getCurrentSession().createCriteria(Category.class);
+        crit.setProjection(Projections.max("id"));
+        return ((Integer) crit.uniqueResult()) + 1;
     }
 }

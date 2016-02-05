@@ -93,7 +93,16 @@
                     <div class="col-md-8">
                         <div class="widget widget-orange">
                             <div class="widget-title">
-                                <i class="fa fa-group"></i> Eenmalige Transacties
+                                <i class="fa fa-group"></i> Transacties
+                                <div class="form-switch">
+                                    <div class="onoffswitch">
+                                        <input type="checkbox" onclick="changeTable(this)" name="onoffswitch" class="onoffswitch-checkbox" id="myonoffswitch" checked>
+                                        <label class="onoffswitch-label" for="myonoffswitch">
+                                            <span class="onoffswitch-inner"></span>
+                                            <span class="onoffswitch-switch"></span>
+                                        </label>
+                                    </div>
+                                </div>
                             </div>
                             <div class="widget-content">
                                 <div class="table-responsive" style="height: 395px; overflow: auto;">
@@ -185,7 +194,7 @@
                     <div class="col-md-4">
                         <div class="widget widget-orange">
                             <div class="widget-title">
-                                <i class="fa fa-group"></i>${formTitle}
+                                <i class="fa fa-group"></i> Details
                             </div>
                             <div id="form" class="widget-content">
                                 <form method="POST" action="JavaScript:addT()">
@@ -196,23 +205,25 @@
                                     <div class="form-group">
                                         <label control-label>Categorie</label>
                                         <select id="category" class="form-control">
-                                            <optgroup label="Uitgaand"></optgroup>
-                                            <c:forEach items="${outgoingCat}" var="cat">
-                                                <option label="${cat.name}" value="${cat.id}"></option>
-                                            </c:forEach>
-                                            <optgroup label="Ingaand"></optgroup>
-                                            <c:forEach items="${incomingCat}" var="cat">
-                                                <option label="${cat.name}" value="${cat.id}"></option>
-                                            </c:forEach>
+                                            <optgroup label="Uitgaand">
+                                                <c:forEach items="${outgoingCat}" var="cat">
+                                                    <option value="${cat.id}">${cat.name}</option>
+                                                </c:forEach>
+                                            </optgroup>
+                                            <optgroup label="Ingaand">
+                                                <c:forEach items="${incomingCat}" var="cat">
+                                                    <option value="${cat.id}">${cat.name}</option>
+                                                </c:forEach>
+                                            </optgroup>
                                         </select>
                                     </div>
                                     <div class="form-group">
                                         <label control-label>Ingaand</label>
-                                        <input id="incoming" type="number" step="0.01" min="0.00" class="form-control" value="0.00">
+                                        <input id="incoming" type="number" step="0.01" min="0.00" class="form-control" placeholder="0.00">
                                     </div>
                                     <div class="form-group">
                                         <label control-label>Uitgaand</label>
-                                        <input id="outgoing" type="number" step="0.01" min="0.00" class="form-control" style="color: #f00" value="0.00">
+                                        <input id="outgoing" type="number" step="0.01" min="0.00" class="form-control" style="color: #f00" placeholder="0.00">
                                     </div>
                                     <div class="form-group">
                                         <label control-label>Omschrijving</label>
@@ -241,7 +252,7 @@
                                         <input id="date" type="date" class="form-control" value="${date}">
                                     </div>
                                     <div class="form-group">
-                                        <button type="submit" class="btn btn-primary"><i class="fa fa-save"></i>Opslaan</button>
+                                        <button id="sub" title="" type="submit" class="btn btn-primary"><i class="fa fa-save"></i>Opslaan</button>
                                     </div>
                                     <div class="form-group">
                                         <a onclick="resetForm()" class="btn btn-danger"><i class="fa fa-times"></i>Annuleren</a>

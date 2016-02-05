@@ -11,9 +11,11 @@ import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.util.List;
+import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.criterion.Projections;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
@@ -89,6 +91,12 @@ public class MortgageService {
         if (mort != null) {
             userService.getUser(Main.getAccountnumber()).removeMortgage(mort);
         }
+    }
+    
+    public int getNextId(){
+        Criteria crit = getCurrentSession().createCriteria(Mortgage.class);
+        crit.setProjection(Projections.max("id"));
+        return ((Integer) crit.uniqueResult()) + 1;
     }
 
     private double setDecimal(double number) {

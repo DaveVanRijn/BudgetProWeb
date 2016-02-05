@@ -17,10 +17,14 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 /**
@@ -108,5 +112,23 @@ public class StatisticsController {
         view.addObject("transactions", transactions);
         
         return view;
+    }
+    
+    @RequestMapping(value = "/category")
+    public @ResponseBody String getDetails(@RequestParam("id") int id){
+        JSONArray array = new JSONArray();
+        Category cat = categoryService.getCategory(id);
+        List<Transaction> transactions = transactionService.getByCategory(cat, userService.getUser(Main.getAccountnumber()));
+        for(Transaction t : transactions){
+            JSONObject obj = new JSONObject();
+            obj.put("description", t.getDescription());
+            if(cat.isIncoming()){
+                obj.put("number", t.getIncoming());
+            } else {
+                obj.put("number", t.getOutgoing());
+            }
+            array.add(obj);
+        }
+        return array.toJSONString();
     }
 }

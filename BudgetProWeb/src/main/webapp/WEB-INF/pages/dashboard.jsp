@@ -59,7 +59,7 @@
                 <div class="col-md-5">
                     <h1>Dashboard</h1>
                     </br>
-                    V0.2.0 Beta
+                    V0.2.1 Beta
                 </div>
                 <div class="col-md-2">
                     <h1>€

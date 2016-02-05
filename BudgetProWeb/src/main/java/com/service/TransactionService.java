@@ -91,6 +91,15 @@ public class TransactionService {
         query.setMaxResults(50);
         return query.list();
     }
+    
+    public List<Transaction> getRepeatedTransactions(User user){
+        hql = "from transaction t where t.user = :user and t.repeating = :repeating order by t.datum DESC";
+        query = getCurrentSession().createQuery(hql);
+        query.setParameter("user", user);
+        query.setParameter("repeating", -1);
+        query.setMaxResults(100);
+        return query.list();
+    }
 
     /**
      * Get a transaction with specified id

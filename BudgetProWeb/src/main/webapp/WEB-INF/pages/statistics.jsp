@@ -160,7 +160,7 @@
                                             <tr>
                                                 <th>Naam</th>
                                                 <th>Bedrag</th>
-                                                <th></th>
+                                                <th>Details</th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -171,9 +171,9 @@
                                                         <script>
                                                             document.write(${entry.amount}.toFixed(2));
                                                         </script>
-                                                    </td><td>${transaction.category.name}</td>
+                                                    </td>
                                                     <td>
-                                                        <a href="${pageContext.request.contextPath}/statistics/details/${entry.cat.id}" class="btn btn-iconed btn-primary btn-sm"><i class="fa fa-search"></i>Details</a>
+                                                        <button onclick="details(${entry.cat.id}, ${entry.cat.incoming})" class="btn btn-iconed btn-primary btn-sm"><i class="fa fa-search"></i>Details</button>
                                                     </td>
                                                 </tr>
                                             </c:forEach>
@@ -206,9 +206,9 @@
                                                         <script>
                                                             document.write(${entry.amount}.toFixed(2));
                                                         </script>
-                                                    </td><td>${transaction.category.name}</td>
+                                                    </td>
                                                     <td>
-                                                        <a href="${pageContext.request.contextPath}/statistics/details/${entry.cat.id}" class="btn btn-iconed btn-primary btn-sm"><i class="fa fa-search"></i>Details</a>
+                                                        <button onclick="details(${entry.cat.id}, ${entry.cat.incoming})" class="btn btn-iconed btn-primary btn-sm"><i class="fa fa-search"></i>Details</button>
                                                     </td>
                                                 </tr>
                                             </c:forEach>
@@ -255,39 +255,19 @@
         </div>
     </div>
     <div class="widget widget-orange">
-        <div class="widget-title">
-            <i class="fa fa-table"></i> Categorie ${category.name}
-            <script>
-                if (${category.incoming}) {
-                    document.write("Ingaand");
-                } else {
-                    document.write("Uitgaand");
-                }
-            </script>
+        <div id="tableTitle" class="widget-title">
+            <i class="fa fa-table"></i> Categorie
         </div>
         <div class="widget-content">
             <div class="table-responsive" style="height: 300px; overflow: auto;">
-                <table class="table">
+                <table id="statTable" class="table">
                     <thead>
                         <tr>
-                            <th>Beschrijving</th>
+                            <th>Omschrijving</th>
                             <th>Bedrag</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <c:forEach  var="transaction" items="${transactions}">
-                            <tr>
-                                <td>${transaction.description}</td>
-                                <td>
-                                    <script>
-                                        if (${category.incoming}) {
-                                            document.write(${transaction.incoming}.toFixed(2));
-                                        } else {
-                                            document.write(${transaction.outgoing}.toFixed(2));
-                                        }
-                                    </script>
-                            </tr>
-                        </c:forEach>
                     </tbody>
                 </table>
             </div>
@@ -299,5 +279,6 @@
 <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js"></script>
 <script src='${pageContext.request.contextPath}/static/js/ad67372f4b8b70896e8a596720082ac6.js'></script>
 <script src='${pageContext.request.contextPath}/static/js/d7dfc13379a397356e42ab8bd98901a0.js'></script>
+<script src='${pageContext.request.contextPath}/static/assets/js/Statistics.js'></script>
 </body>
 </html>

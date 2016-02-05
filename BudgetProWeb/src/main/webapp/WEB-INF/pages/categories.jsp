@@ -88,7 +88,7 @@
                             </div>
                             <div class="widget-content">
                                 <div class="table-responsive" style="height: 395px; overflow: auto;">
-                                    <table class="table">
+                                    <table id="catTable" class="table">
                                         <thead>
                                             <tr>
                                                 <th>Naam</th>
@@ -98,7 +98,7 @@
                                         </thead>
                                         <tbody>
                                             <c:forEach  var="category" items="${user.categories}">
-                                                <tr>
+                                                <tr id="row${category.id}">
                                                     <td>${category.name}</td>
                                                     <td>
                                                         <script>
@@ -110,8 +110,8 @@
                                                         </script>
                                                     </td>
                                                     <td>
-                                                        <a href="${pageContext.request.contextPath}/category/edit/${category.id}" class="btn btn-iconed btn-primary btn-xs"><i class="fa fa-pencil"></i>Bewerken</a>
-                                                        <a onclick="return confirm('Weet je zeker dat je deze categorie wil verwijderen?')" href="${pageContext.request.contextPath}/category/delete/${category.id}" class="btn btn-danger btn-xs"><i class="fa fa-times"></i>Verwijderen</a>
+                                                        <button onclick="detailCat(${category.id})" class="btn btn-iconed btn-primary btn-xs"><i class="fa fa-pencil"></i>Bewerken</button>
+                                                        <button onclick="deleteCat(${category.id})" class="btn btn-danger btn-xs"><i class="fa fa-times"></i>Verwijderen</button>
                                                     </td>
                                                 </tr>
                                             </c:forEach>
@@ -124,34 +124,34 @@
                     <div class="col-md-4">
                         <div class="widget widget-orange">
                             <div class="widget-title">
-                                <i class="fa fa-group"></i>${formTitle}
+                                <i class="fa fa-group"></i> Details
                             </div>
                             <div class="widget-content">
-                                <form:form method="POST" modelAttribute="category" action="${pageContext.request.contextPath}/category/add">
+                                <form method="POST" action="JavaScript:addCat()" >
                                     <div class="form-group">
                                         <label control-label>ID</label>
-                                        <form:input path="id" type="text" placeholder="${category.id}" class="form-control" readonly="true"/>
+                                        <input id="id" type="text" class="form-control" readonly="true" value="0">
                                     </div>
                                     <div class="form-group">
                                         <label control-label>Naam</label>
-                                        <form:input path="name" type="text" placeholder="${category.name}" class="form-control" required="true"/>
+                                        <input id="name" type="text" class="form-control" placeholder="Naam">
                                     </div>
                                     <div class="form-group">
                                         <label control-label>Ingaand/Uitgaand</label>
                                         <div class="radio">
-                                            <form:radiobutton path="incoming" name="incoming" value="true" label=" Ingaand" />
+                                            <input id="incoming" type="radio" name="inOut" value="1"> Ingaand
                                         </div>
                                         <div class="radio">
-                                            <form:radiobutton path="incoming" name="incoming" value="false" label=" Uitgaand" />
+                                            <input id="outgoing" type="radio" name="inOut" value="0"> Uitgaand
                                         </div>
                                     </div>
                                     <div class="form-group">
-                                        <form:button type="submit" class="btn btn-primary"><i class="fa fa-save"></i>Opslaan</form:button>
-                                        </div>
-                                        <div class="form-group">
-                                            <a href="${pageContext.request.contextPath}/category/list" class="btn  btn-danger"><i class="fa fa-times"></i>Annuleren</a>
+                                        <button type="submit" class="btn btn-primary"><i class="fa fa-save"></i>Opslaan</button>
                                     </div>
-                                </form:form>
+                                    <div class="form-group">
+                                        <a onclick="resetForm()" class="btn  btn-danger"><i class="fa fa-times"></i>Annuleren</a>
+                                    </div>
+                                </form>
                             </div>
                         </div>
                     </div>
@@ -160,7 +160,13 @@
         </div>
         <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
         <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js"></script>
+        <script src='${pageContext.request.contextPath}/static/assets/js/Categories.js'></script>
         <script src='${pageContext.request.contextPath}/static/js/ad67372f4b8b70896e8a596720082ac6.js'></script>
         <script src='${pageContext.request.contextPath}/static/js/d7dfc13379a397356e42ab8bd98901a0.js'></script>
+        <script type="text/javascript">
+                                            $(document).ready(function () {
+                                                document.getElementById("outgoing").checked = true;
+                                            });
+        </script>
     </body>
 </html>

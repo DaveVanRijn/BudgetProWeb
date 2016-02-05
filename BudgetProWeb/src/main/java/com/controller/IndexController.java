@@ -121,8 +121,8 @@ public class IndexController {
 
         while (lastCalculatedMonth != currentMonth) {
             int calculatedMonth = lastCalculatedMonth + 1;
-            if (calculatedMonth == 12) {
-                calculatedMonth = 0;
+            if (calculatedMonth == 13) {
+                calculatedMonth = 1;
             }
             DateFormat dateForm = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             for (Transaction t : currentUser.getTransactions()) {
@@ -214,9 +214,9 @@ public class IndexController {
                         holdings.add(new HoldTransaction(0, interest, description,
                                 dateForm.format(cal.getTime()), cat, currentUser));
                         break;
-                    case "Annuïteit":
+                    case "Annuiteit":
                         //Annuity
-                        description += "\nAnnuïteit hypotheek '" + m.getName() + "'"
+                        description += "\nAnnuiteit hypotheek '" + m.getName() + "'"
                                 + "\nMaand " + (calculatedMonth);
                         total = m.getAnnuity();
                         holdings.add(new HoldTransaction(0, total, description,

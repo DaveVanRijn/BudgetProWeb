@@ -88,7 +88,7 @@
                             </div>
                             <div class="widget-content">
                                 <div class="table-responsive" style="height: 395px; overflow: auto;">
-                                    <table class="table">
+                                    <table id="cats" class="table">
                                         <thead>
                                             <tr>
                                                 <th>Naam</th>
@@ -100,8 +100,8 @@
                                         </thead>
                                         <tbody>
                                             <c:forEach  var="mortgage" items="${user.mortgages}">
-                                                <tr>
-                                                    <td>${mortgage.name}</td>
+                                                <tr id="row${mortgage.id}">
+                                                    <td id="mort${mortgage.id}">${mortgage.name}</td>
                                                     <td>${mortgage.kind}</td>
                                                     <td>
                                                         <script>
@@ -114,8 +114,8 @@
                                                         </script>
                                                     </td>
                                                     <td>
-                                                        <a href="${pageContext.request.contextPath}/mortgage/edit/${mortgage.id}" class="btn btn-iconed btn-primary btn-xs"><i class="fa fa-search"></i>Details</a>
-                                                        <a onclick="return confirm('Weet je zeker dat je deze hypotheek wil verwijderen?')" href="${pageContext.request.contextPath}/mortgage/delete/${mortgage.id}" class="btn btn-danger btn-xs"><i class="fa fa-times"></i>Verwijderen</a>
+                                                        <button onclick="toForm(${mortgage.id})" class="btn btn-iconed btn-primary btn-xs"><i class="fa fa-search"></i>Details</button>
+                                                        <button onclick="deleteC(${mortgage.id})" class="btn btn-danger btn-xs"><i class="fa fa-times"></i>Verwijderen</button>
                                                     </td>
                                                 </tr>
                                             </c:forEach>
@@ -128,60 +128,60 @@
                     <div class="col-md-4">
                         <div class="widget widget-orange">
                             <div class="widget-title">
-                                <i class="fa fa-group"></i>${formTitle}
+                                <i class="fa fa-group"></i> Details
                             </div>
                             <div class="widget-content">
-                                <form:form method="POST" modelAttribute="mortgage" action="${pageContext.request.contextPath}/mortgage/add">
+                                <form method="POST" action="JavaScript:addC()">
                                     <div class="form-group">
                                         <label control-label>ID</label>
-                                        <form:input path="id" type="text" class="form-control" readonly="true"/>
+                                        <input id="id" type="text" class="form-control" readonly="true" value="0">
                                     </div>
                                     <div class="form-group">
                                         <label control-label>Naam</label>
-                                        <form:input path="name" type="text" class="form-control" required="true"/>
+                                        <input id="name" type="text"  class="form-control" required="true" placeholder="Naam">
                                     </div>
                                     <div class="form-group">
                                         <label control-label>Soort</label>
                                         <div class="radio">
-                                            <form:radiobutton path="kind" name="kind" value="Aflossingsvrij" label="Aflossingsvrij"/>
+                                            <input id="aflVrij" type="radio" name="kind" value="Aflossingsvrij" checked="true"> Aflossingsvrij
                                         </div>
                                         <div class="radio">
-                                            <form:radiobutton path="kind" name="kind" value="Annuïteit" label="Annuïteit"/>
+                                            <input id="annu" type="radio" name="kind" value="Annuïteit"> Annuïteit
                                         </div>
                                         <div class="radio">
-                                            <form:radiobutton path="kind" name="kind" value="Lineair" label="Lineair"/>
+                                            <input id="lin" type="radio" name="kind" value="Lineair"> Lineair
                                         </div>
                                         <div class="radio">
-                                            <form:radiobutton path="kind" name="kind" value="Spaar" label="Spaar"/>
+                                            <input id="spaar" type="radio" name="kind" value="Spaar"> Spaar
                                         </div>
                                     </div>
                                     <div class="form-group">
                                         <label control-label>Omschrijving</label>
-                                        <form:textarea path="description" class="form-control"/>
+                                        <textarea id="description" class="form-control" placeholder="Omschrijving"></textarea>
                                     </div>
                                     <div class="form-group">
                                         <label control-label>Aflossing</label>
-                                        <form:input path="redemption" type="number" step="any" min="0" class="form-control"/>
+                                        <input id="redemption" type="number" min="0.00" step="any" placeholder="0.00" class="form-control">
                                     </div>
                                     <div class="form-group">
                                         <label control-label>Restschuld</label>
-                                        <form:input path="residualDebt" type="number" step="any" min="0" class="form-control"/>
+                                        <input id="resid" type="number" min="0.00" step="any" placeholder="0.00" class="form-control">
                                     </div>
                                     <div class="form-group">
                                         <label control-label>Rente</label>
-                                        <form:input path="interest" type="number" step="any" min="0" class="form-control"/>
+                                        <input id="interest" type="number" min="0.00" step="any" placeholder="0.00" class="form-control">
                                     </div>
                                     <div class="form-group">
                                         <label control-label>Annuïteit/Spaarpremie</label>
-                                        <form:input path="annuity" type="number" step="any" min="0" class="form-control"/>
+                                        <input id="annuïty" type="number" min="0.00" step="any" placeholder="0.00" class="form-control">
                                     </div>
                                     <div class="form-group">
-                                        <form:button type="submit" class="btn btn-primary"><i class="fa fa-save"></i>Opslaan</form:button>
-                                        </div>
-                                        <div class="form-group">
-                                            <a href="${pageContext.request.contextPath}/mortgage/list" class="btn btn-danger"><i class="fa fa-times"></i>Annuleren</a>
+                                        <button type="submit" class="btn btn-primary"><i class="fa fa-save"></i>Opslaan</button>
                                     </div>
-                                </form:form>
+                                    <div class="form-group">
+                                        <a onclick="resetForm()" class="btn btn-danger"><i class="fa fa-times"></i>Annuleren</a>
+                                    </div>
+                                </form>
                             </div>
                         </div>
                     </div>
@@ -190,6 +190,7 @@
         </div>
         <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
         <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js"></script>
+        <script src='${pageContext.request.contextPath}/static/assets/js/Mortgages.js'></script>
         <script src='${pageContext.request.contextPath}/static/js/ad67372f4b8b70896e8a596720082ac6.js'></script>
         <script src='${pageContext.request.contextPath}/static/js/d7dfc13379a397356e42ab8bd98901a0.js'></script>
     </body>

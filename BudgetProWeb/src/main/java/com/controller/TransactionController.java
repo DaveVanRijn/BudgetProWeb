@@ -46,8 +46,6 @@ import org.springframework.web.servlet.ModelAndView;
 @RequestMapping(value = "/transaction")
 public class TransactionController {
 
-    private static String backupDate;
-
     @Autowired
     private TransactionService transactionService;
     @Autowired
@@ -89,7 +87,6 @@ public class TransactionController {
         transList.addObject("incomingCat", incoming);
         transList.addObject("outgoingCat", outgoing);
         transList.addObject("formTitle", "Nieuwe transactie");
-        backupDate = null;
 
         return transList;
     }
@@ -103,8 +100,16 @@ public class TransactionController {
             JSONObject object = (JSONObject) parser.parse(json);
             int id = Integer.parseInt(object.get("id").toString());
             Category category = categoryService.getCategory(Integer.parseInt(object.get("category").toString()));
-            double incoming = Double.parseDouble(object.get("incoming").toString());
-            double outgoing = Double.parseDouble(object.get("outgoing").toString());
+            String in = object.get("incoming").toString();
+            String out = object.get("outgoing").toString();
+            double incoming = 0.0;
+            double outgoing = 0.0;
+            if (!in.isEmpty()) {
+                incoming = Double.parseDouble(in);
+            }
+            if (!out.isEmpty()) {
+                outgoing = Double.parseDouble(out);
+            }
             String description = object.get("description").toString();
             int repeating = Integer.parseInt(object.get("repeating").toString());
             String datum = object.get("date").toString();
@@ -113,14 +118,13 @@ public class TransactionController {
             transaction.setId(id);
             transaction.setUser(userService.getUser(Main.getAccountnumber()));
 
+            object = new JSONObject();
             boolean isNew;
             if (transactionService.getTransaction(transaction.getId()) != null) {
-                String date = transaction.getDatum();
-                String time = backupDate.split(" ")[1];
-                date += " " + time;
-                transaction.setDatum(date);
+                datum += " " + transactionService.getTransaction(transaction.getId()).getDatum().split(" ")[1];
+                transaction.setDatum(datum);
                 transactionService.updateTransaction(transaction);
-                backupDate = null;
+                object.put("id", transaction.getId());
                 isNew = false;
             } else {
                 String date = transaction.getDatum();
@@ -130,12 +134,11 @@ public class TransactionController {
 
                 transaction.setDatum(date);
                 transactionService.addTransaction(transaction);
+                object.put("id", transactionService.getNextId() - 1);
                 isNew = true;
             }
 
-            object = new JSONObject();
             object.put("add", isNew);
-            object.put("id", transactionService.getNextId() - 1);
             object.put("repeating", (transaction.getRepeating() > 0));
             object.put("incoming", transaction.getIncoming());
             object.put("outgoing", transaction.getOutgoing());
@@ -161,6 +164,7 @@ public class TransactionController {
         json.put("outgoing", transaction.getOutgoing());
         json.put("description", transaction.getDescription());
         json.put("repeating", transaction.getRepeating());
+        json.put("fullDate", transaction.getDatum());
         json.put("date", transaction.getDateOnly());
 
         return json.toJSONString();
@@ -177,5 +181,37 @@ public class TransactionController {
         form.setDecimalFormatSymbols(symb);
 
         return form.format((userService.getUser(Main.getAccountnumber()).getBalance()));
+    }
+    
+    @RequestMapping(value = "/changeList", method = RequestMethod.GET)
+    public @ResponseBody String changeList(@RequestParam("eenmalig") boolean eenmalig){
+        User user = userService.getUser(Main.getAccountnumber());
+        JSONArray array = new JSONArray();
+        JSONObject json;
+        if(eenmalig){
+            List<Transaction> tranList = transactionService.getLessTransactions(user, 100);
+            for(Transaction t : tranList){
+                json = new JSONObject();
+                json.put("date", t.getDatum());
+                json.put("incoming", t.getIncoming());
+                json.put("outgoing", t.getOutgoing());
+                json.put("category", t.getCategory().getName());
+                json.put("id", t.getId());
+                array.add(json);
+            }
+        } else {
+            List<Transaction> tranList = transactionService.getRepeatedTransactions(user);
+            for(Transaction t : tranList){
+                json = new JSONObject();
+                json.put("date", t.getDatum());
+                json.put("incoming", t.getIncoming());
+                json.put("outgoing", t.getOutgoing());
+                json.put("category", t.getCategory().getName());
+                json.put("id", t.getId());
+                array.add(json);
+            }
+        }
+        
+        return array.toJSONString();
     }
 }
